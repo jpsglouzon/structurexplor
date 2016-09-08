@@ -4,11 +4,14 @@ $(function() {
     $("#export-rna_ss1-svg").on ("click", function (e) {
 
         datamonkey.save_image("svg", "#rna_ss1");
+        ga('send', 'event', 'widget', 'export structure 1 in SVG', $(e.currentTarget).val());
+
 
     });
     $("#export-rna_ss2-svg").on ("click", function (e) {
 
         datamonkey.save_image("svg", "#rna_ss2");
+       ga('send', 'event', 'widget', 'export structure 1 in SVG', $(e.currentTarget).val());
 
     });
     
