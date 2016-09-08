@@ -62,7 +62,10 @@ sidebar <- dashboardSidebar(
               tags$script(src="underscore-min.js"),
               tags$script(src="phylotree.js"),
               tags$script(src="intro.js"),
-              tags$script(src="custom.js")
+              tags$script(src="custom.js"),
+              
+              tags$script(src="g-a.js")
+              
 
       )
     
