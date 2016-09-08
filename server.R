@@ -322,11 +322,13 @@ shinyServer(function(input, output,session) {
       updateSelectInput(session, "setnbcluster", choices = setnbcluster_options, selected = 0)
     }
   
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Load session');"));
+    
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Load session');"));
+
   })
   
   output$sessionDataLoaded<- reactive({
