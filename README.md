@@ -6,7 +6,3 @@
 Please report suggestions or issues [here](https://github.com/jpsglouzon/structurexplor/issues)
 
 #### How to cite structureXploR (soon)
-
-
-### License 
-GPL
