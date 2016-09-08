@@ -64,7 +64,7 @@ sidebar <- dashboardSidebar(
               tags$script(src="intro.js"),
               tags$script(src="custom.js"),
               
-              tags$script(src="g_a.js")
+              tags$script(src="ga.js")
               
 
       )
