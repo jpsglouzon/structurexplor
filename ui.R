@@ -164,8 +164,8 @@ body <- dashboardBody(
                     "is maintained by Jean-Pierre Glouzon ",HTML('  <a href="https://github.com/jpsglouzon" target="_blank"><i class="fa fa-github"></i></a>'),br(),
                     "Suggestions or issues can be reported ",HTML('  <a href="https://github.com/jpsglouzon/structurexplor/issues" target="_blank">here</a>'),br(),br(),
                   
-                    HTML(' <a href="http://info.usherbrooke.ca/Prospectus" target="_blank">Prospectus </a> ')," & ",
-                    HTML(' <a href="http://jpperreaultlab.recherche.usherbrooke.ca/" target="_blank">Jean-Pierre Perreault Lab.</a> '),br(),
+                    HTML(' <a href="http://info.usherbrooke.ca/Prospectus" target="_blank">Prospectus</a> ')," & ",
+                    HTML(' <a href="http://jpperreaultlab.recherche.usherbrooke.ca/" target="_blank">Perreault Lab.</a> '),br(),
                     "GPL licence",br(),"2016"
                     )
           
@@ -372,9 +372,11 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                              actionButton("buttonPrepare2","Prepare",icon("gears"),class="btn-primary",style='font-size:250%;color:white')))
             ),
             conditionalPanel("input.go>0||input.ex_ss_linearRNA_pseudoknots>0||input.ex_ss_circularRNA>0||input.ex_ss_linearRNA_g4>0||input.ex_ss_1000structures>0||output.sessionDataLoaded==1",
+                                             
             tabBox( title = tagList(shiny::icon("compass"), "Explore"),
               id = "tabStructureXploR",width = 12,
               tabPanel(title = tagList(shiny::icon("check"), "Clustering quality"),value = "1",
+                       
                        fluidRow(column(12,
                                        
                                        actionLink("clusteringQualInfo", "Info. on clustering quality and silhouette coefficient",icon("info-circle")),br(),br(),

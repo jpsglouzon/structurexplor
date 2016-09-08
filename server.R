@@ -67,6 +67,10 @@ shinyServer(function(input, output,session) {
     
     if(input$focusStructViz==TRUE){
       shinyjs::hide("snmViz",anim=TRUE)
+      
+      #GA
+      shinyjs::runjs(HTML("ga('send', 'event', 'Visualize structure', 'Focus on structure visualization','", input$viznmotifs ,"');")); 
+      
     } else { shinyjs::show("snmViz",anim=TRUE)}
     
     if(is.null(data_res$data)){
@@ -150,7 +154,8 @@ shinyServer(function(input, output,session) {
     shinyjs::show("clustConfig")
 
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Compute structural features');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Compute structural features','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+  
   })
   
   observeEvent(input$ex_ss_linearRNA_pseudoknots, {
@@ -185,7 +190,8 @@ shinyServer(function(input, output,session) {
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 1');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 1','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+    
     
   }) 
   
@@ -221,7 +227,8 @@ shinyServer(function(input, output,session) {
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 2');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 2','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+    
   }) 
   
   observeEvent(input$ex_ss_linearRNA_g4, {
@@ -253,7 +260,8 @@ shinyServer(function(input, output,session) {
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 3');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 3','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+    
   }) 
   
   
@@ -287,7 +295,8 @@ shinyServer(function(input, output,session) {
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 4');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 4','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+    
   })   
   
   
@@ -317,7 +326,7 @@ shinyServer(function(input, output,session) {
     shinyjs::show("clustConfig")
     
     #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Load session');"));
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Load session');"));
   })
   
   output$sessionDataLoaded<- reactive({
@@ -352,6 +361,10 @@ shinyServer(function(input, output,session) {
       data_res_updatesetnmotifs$data=NULL  
       
       data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
+    
+      #GA
+      shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Hierarchical clustering','", input$hcExploreParam ,"');"));
+      
     }
   })
   
@@ -362,11 +375,13 @@ shinyServer(function(input, output,session) {
       shinyjs::reset("setnmotifs")
         data_res_updatesetnmotifs$data=NULL  
       data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
-      }
-    
-    
+      
+      #GA
+      shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Nb. of clusters','", input$setnbcluster ,"');"));
+    }
     
   })
+  
   #setnmotifs  (Exploration parameters)
   observeEvent(input$setnmotifs, {
       if(!is.null(data_res$data))
@@ -374,6 +389,10 @@ shinyServer(function(input, output,session) {
         data_res_updatesetnmotifs$data=data_res$data  
         data_res_updatesetnmotifs$data=updateStructuralPatterns_with_setnmotifs(data_res$data,data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
         data_res$data=data_res_updatesetnmotifs$data 
+        
+        #GA
+        shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Top rep. regions','", input$setnmotifs ,"');")); 
+        
         }
   })
   
@@ -443,6 +462,9 @@ shinyServer(function(input, output,session) {
   output$nbClustersBox <- renderInfoBox({
     if (is.null(data_res$data)) return()
     dataPatterns=data_res$data
+    
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Clustering Quality');"));  
     
     if (is.null(optimalNbCluster$data)){
       optimalNbCluster$data=dataPatterns[[3]]$bestNbClusters
@@ -615,6 +637,9 @@ shinyServer(function(input, output,session) {
     if (is.null(data_res$data)) return()
     dataPatterns=data_res$data
     
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Cluster features');"));  
+    
     datatemp=signif((dataPatterns[[3]]$clustSize/sum(dataPatterns[[3]]$clustSize))*100,3)
     
     a <- rCharts:::Highcharts$new()
@@ -780,10 +805,16 @@ shinyServer(function(input, output,session) {
     if (is.null(dataPatterns)) 
     {return(dataPatterns[[5]])}
     else{
+      #GA
+      shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Feature visualization');"));   
+      
       
       snm_x=as.numeric(input$snm_x)
       snm_y=as.numeric(input$snm_y)
       scatPlotSNM(dataPatterns[[2]]$SuperMotif[,snm_x],dataPatterns[[2]]$SuperMotif[,snm_y],dataPatterns[[3]]$bestNmotifsForClusters_coord[,snm_x],dataPatterns[[3]]$bestNmotifsForClusters_coord[,snm_y],snm_x,snm_y,dataPatterns[[3]]$bestNmotifsForClusters_pos,dataPatterns[[3]]$bestNmotifsForClusters_pos_namesNmotifs,dataPatterns[[2]]$singularValuesPercent,dataPatterns[[1]]$headers,dataPatterns[[3]]$idxClustering,dataPatterns[[3]]$colorClusters,dataPatterns[[3]]$repClustList,dataPatterns[[3]]$outliers,dataPatterns[[3]]$matnmPosBestnmotifsforForna,dataPatterns[[1]])
+    
+      
+      
     }
   })
   
@@ -874,6 +905,7 @@ shinyServer(function(input, output,session) {
         }
         else{nmotifsRegion1=""}
         
+        
         #Visualize structure
         atemp=paste("
                     var container = new FornaContainer(\"#rna_ss1\",
@@ -944,7 +976,7 @@ shinyServer(function(input, output,session) {
           indTempHeader2=which(data_res$data[[1]]$headers %in% input$click$header2)#dissimilarity matrix based on cosine similarity -->test with output of snm (faster)
           nmotifsRegion2=dataPatterns[[3]]$matnmPosBestnmotifsforForna[indTempHeader2]
         }
-
+        
       }
       else{nmotifsRegion2=""}
       
@@ -978,12 +1010,18 @@ shinyServer(function(input, output,session) {
   
   observeEvent(input$buttonPrepare1, {
     shinydashboard::updateTabItems(session, "menu","prepare")
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to prepare page (button prepare 1)');"));
   })
   observeEvent(input$buttonExplore, {
     shinydashboard::updateTabItems(session, "menu","explore")
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to explore page');"));
   })
   observeEvent(input$buttonPrepare2, {
     shinydashboard::updateTabItems(session, "menu","prepare")
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to prepare page (button prepare 2)');"));
   })
   
   onclick("toggleAdvancedrnad", toggle(id = "advancedrnad", anim = TRUE))
@@ -995,7 +1033,11 @@ shinyServer(function(input, output,session) {
         paste('secStruct-', Sys.Date(), '.db', sep='')
       },
       content = function(fileConn) {
-        cat("", file=fileConn, append=FALSE, sep='')
+        
+            #GA
+            shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Download Filtered struct. in dot-bracket');"));
+        
+            cat("", file=fileConn, append=FALSE, sep='')
 
             for (i in 1:length(input$tbOfStruct_rows_all)) 
             {
@@ -1059,6 +1101,9 @@ shinyServer(function(input, output,session) {
   output$dendSS2 <- renderUI({
     
     data_res$data
+    
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Cluster and structure hierarchy');"));  
     
     if(input$bootstrap>0)
     {
