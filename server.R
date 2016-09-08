@@ -149,7 +149,8 @@ shinyServer(function(input, output,session) {
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
 
-    
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Compute structural features');"));
   })
   
   observeEvent(input$ex_ss_linearRNA_pseudoknots, {
@@ -182,6 +183,9 @@ shinyServer(function(input, output,session) {
     ncol(data_res$data[[2]]$SuperMotif)
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
+    
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 1');"));
     
   }) 
   
@@ -216,6 +220,8 @@ shinyServer(function(input, output,session) {
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 2');"));
   }) 
   
   observeEvent(input$ex_ss_linearRNA_g4, {
@@ -246,6 +252,8 @@ shinyServer(function(input, output,session) {
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 3');"));
   }) 
   
   
@@ -278,6 +286,8 @@ shinyServer(function(input, output,session) {
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Run example 4');"));
   })   
   
   
@@ -305,6 +315,9 @@ shinyServer(function(input, output,session) {
   
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
+    
+    #GA
+    shinyjs::runjs(HTML("ga('send', 'event', 'widget', 'Load session');"));
   })
   
   output$sessionDataLoaded<- reactive({
@@ -324,6 +337,8 @@ shinyServer(function(input, output,session) {
     content = function(fileConn) {
       saveRDS(data_res, file = fileConn)
     }
+    
+    
   )
   
   ##############

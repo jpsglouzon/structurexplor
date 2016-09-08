@@ -4,32 +4,37 @@ $(function() {
     $("#export-rna_ss1-svg").on ("click", function (e) {
 
         datamonkey.save_image("svg", "#rna_ss1");
-        ga('send', 'event', 'widget', 'export structure 1 in SVG', $(e.currentTarget).val());
+        ga('send', 'event', 'widget', 'Export structure 1 in SVG');
 
 
     });
     $("#export-rna_ss2-svg").on ("click", function (e) {
 
         datamonkey.save_image("svg", "#rna_ss2");
-       ga('send', 'event', 'widget', 'export structure 1 in SVG', $(e.currentTarget).val());
+       ga('send', 'event', 'widget', 'Export structure 1 in SVG');
 
     });
     
     $("#export-phylo-svg").on ("click", function (e) {
 
-    datamonkey.save_image("svg", "#dendSS2");
+        datamonkey.save_image("svg", "#dendSS2");
+        ga('send', 'event', 'widget', 'Export hierarchy in SVG');
 
     });
     
     $("#export-scatplotsnm-svg").on ("click", function (e) {
 
-    datamonkey.save_image("svg", "#scatplotsnm");
+      datamonkey.save_image("svg", "#scatplotsnm");
+      ga('send', 'event', 'widget', 'Export snm scatterplot in SVG');
+
 
     });
     
     $("#export-varexplained-svg").on ("click", function (e) {
 
     datamonkey.save_image("svg", "#varExp");
+          ga('send', 'event', 'widget', 'Export explained variability');
+
 
     });
     
