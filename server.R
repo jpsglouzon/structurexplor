@@ -86,8 +86,8 @@ shinyServer(function(input, output,session) {
 
     if(!is.null(parsedRNA$data$headers))
     {
-    if (length(parsedRNA$data$headers)>50 & input$bootstrap>0)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 50 structures is required. Please reduce the number of structures for bootstrap.</p>')
+    if (length(parsedRNA$data$headers)>25 & input$bootstrap>0)
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 25 structures is required. Please reduce the number of structures for bootstrap.</p>')
       parsingIsSuccessful$data=F}
     else
       { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
@@ -106,8 +106,8 @@ shinyServer(function(input, output,session) {
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>More than 5 structures is required. Please add more structures.</p>') 
       parsingIsSuccessful$data=F}
     #nb struct minimum
-    if (length(parsedRNA$data$headers)>1200)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 1200 structures is required. Please reduce the number of structures.</p>') 
+    if (length(parsedRNA$data$headers)>250)
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 250 structures is required. Please reduce the number of structures.</p>') 
       parsingIsSuccessful$data=F}
     
     #structure with id identique

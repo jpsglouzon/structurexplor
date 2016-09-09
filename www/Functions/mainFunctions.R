@@ -8,7 +8,7 @@ gg_color_hue <- function(n) {
 computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max_n_motifs,rnad,setnmotifs,maxClust,bootstrap,HC,setnbcluster)
 {
   patterns=NULL
-  withProgress(message = 'Compute structural patterns', value = 0, { 
+  withProgress(message = 'Compute structural features', value = 0, { 
     allstep=9
     #incProgress(1/allstep, message = "Parse .db file...")   
     #resParseRNA <- parseDbFile(pathfile)
@@ -25,7 +25,7 @@ computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max
               snm=minSnmForBootstrap
               resComp <- runSNM (pathfile,snm,max_n_motifs)               
             }
-            incProgress(3/allstep, message = "Run the clustering (with bootstrap): may take some time...")
+            incProgress(3/allstep, message = "Run the clustering (bootstrap): pleat wait...")
           }
           else{
             incProgress(3/allstep, message = "Run the clustering...")
@@ -65,7 +65,7 @@ updateStructuralPatterns_with_setnbcluster<-function(resParseRNA,resComp,distCho
   withProgress(message = 'Update structural patterns', value = 0, { 
     allstep=7
     if (bootstrap>0)
-    {incProgress(1/allstep, message = "Run the clustering (with bootstrap): may take some time...")}
+    {incProgress(1/allstep, message = "Run the clustering (bootstrap): please wait...")}
     else{
       incProgress(1/allstep, message = "Run the clustering...")
     }    
@@ -95,7 +95,7 @@ updateStructuralPatterns_with_setnmotifs<-function(patterns,resParseRNA,resComp,
   withProgress(message = 'Update structural patterns', value = 0, { 
     allstep=7
     if (bootstrap>0)
-    {incProgress(1/allstep, message = "Run the clustering (with bootstrap) : may take some time...")}
+    {incProgress(1/allstep, message = "Run the clustering (bootstrap) : please wait...")}
     else{
       incProgress(1/allstep, message = "Run the clustering...")
     }    

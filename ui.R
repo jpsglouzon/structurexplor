@@ -14,7 +14,7 @@ library(devtools)
 library(rCharts)
 library(Biostrings)
 library(BiocGenerics)
-library("shinyBS")
+library(shinyBS)
 
 header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 200, disable = FALSE)
 #header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))
@@ -215,17 +215,20 @@ body <- dashboardBody(
                                         conditionalPanel("input.bootstrap==0", 
                                         actionLink("ex_ss_linearRNA_g4", "88 struct. of 5S and struct. with G4.",icon("arrow-circle-o-right")),br()
                                         ),
-                                        conditionalPanel("input.bootstrap==0", 
-                                        actionLink("ex_ss_1000structures", "1186 struct. from 5S, HH, tRNA and 16s.",icon("arrow-circle-o-right")),br()
-                                        ),
+                                        #conditionalPanel("input.bootstrap==0", 
+                                        #actionLink("ex_ss_1000structures", "1186 struct. from 5S, HH, tRNA and 16s.",icon("arrow-circle-o-right")),br()
+                                        #),
                                         
                                         actionLink("exInfo", "Source of structures",icon("info-circle")),br(),
                                         
                                         bsModal("modalExInfo", strong("Source of structures"), "exInfo", size = "medium",
                                                 tags$ul(
+                                                  #tags$li( strong(HTML(' <a href="http://www.rnasoft.ca/strand/" target="_blank">RNASTRAND database</a> ')),
+                                                  #  ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), transfer messenger RNA (tmRNA), HH (Hammerhead Rizobyme) and 16S (16 Ribosomal RNA).'
+                                                  #), 
                                                   tags$li( strong(HTML(' <a href="http://www.rnasoft.ca/strand/" target="_blank">RNASTRAND database</a> ')),
-                                                    ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), transfer messenger RNA (tmRNA), HH (Hammerhead Rizobyme) and 16S (16 Ribosomal RNA).'
-                                                  ), 
+                                                    ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), transfer messenger RNA (tmRNA) and HH (Hammerhead Rizobyme).'
+                                                  ),
                                                   tags$li(strong(HTML(' <a href="http://scottgroup.med.usherbrooke.ca/G4RNA/" target="_blank">G4RNA database</a> ')),
                                                     ' : Structures with g-quadruplexes (G4).'
                                                   ),
