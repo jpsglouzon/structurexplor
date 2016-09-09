@@ -47,7 +47,7 @@ sidebar <- dashboardSidebar(
          condition = "input.distChoiceParam == 1",
          selectInput("setnmotifs", label = tags$h6("Top rep. regions"), 
                      choices = list("1" = 1,"2" = 2, "3" = 3, "4" = 4, "5" = 5)
-                     , selected = 1)
+                     , selected = 3)
        )
      )
     , 

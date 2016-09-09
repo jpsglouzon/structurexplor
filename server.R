@@ -126,6 +126,7 @@ shinyServer(function(input, output,session) {
   
   #Swith to tab 2.explore after clicking on run pipeline
   observeEvent(input$go, {
+   
     pathfile$data=input$pathDbFile$datapath
     
     shinyjs::reset("hcExploreParam")
@@ -150,12 +151,12 @@ shinyServer(function(input, output,session) {
     
     #si erreur repointer sur les données
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
+    
     updateTabItems(session, "menu","explore")
+   
     shinyjs::show("clustConfig")
 
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Compute structural features','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
-  
+
   })
   
   observeEvent(input$ex_ss_linearRNA_pseudoknots, {
@@ -174,7 +175,7 @@ shinyServer(function(input, output,session) {
     
     data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
-    
+      
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
     
@@ -187,15 +188,15 @@ shinyServer(function(input, output,session) {
     setsnm_y_options <- list()
     ncol(data_res$data[[2]]$SuperMotif)
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
+    
+
+    
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
-    
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 1','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
-    
     
   }) 
   
   observeEvent(input$ex_ss_circularRNA, {
+    
     
     pathfile$data="www/Data/secStruc_circular_RNA.db"
     shinyjs::reset("hcExploreParam")
@@ -212,6 +213,7 @@ shinyServer(function(input, output,session) {
     data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
     
+    
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
     
@@ -224,14 +226,18 @@ shinyServer(function(input, output,session) {
     setsnm_y_options <- list()
     ncol(data_res$data[[2]]$SuperMotif)
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
+    
+    
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 2','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
+
     
+  
   }) 
   
   observeEvent(input$ex_ss_linearRNA_g4, {
+    
+    
     pathfile$data="www/Data/secStruc_linear_RNA_g4.db"
     shinyjs::reset("hcExploreParam")
     
@@ -259,14 +265,12 @@ shinyServer(function(input, output,session) {
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 3','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
-    
   }) 
   
   
   observeEvent(input$ex_ss_1000structures, {
     
+  
     pathfile$data="www/Data/1000structures.db"
     shinyjs::reset("hcExploreParam")
     
@@ -279,7 +283,9 @@ shinyServer(function(input, output,session) {
     
     data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
-    
+
+   
+        
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
     
@@ -294,9 +300,7 @@ shinyServer(function(input, output,session) {
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Run example 4','", paste('snm :',input$snm,';','max_n_motifs :',input$max_n_motifs,  'HC :',input$HC, 'maxClust :',input$maxClust,'bootstrap :',input$bootstrap) ,");"));
-    
+  
   })   
   
   
@@ -322,9 +326,7 @@ shinyServer(function(input, output,session) {
       updateSelectInput(session, "setnbcluster", choices = setnbcluster_options, selected = 0)
     }
   
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Load session');"));
-    
+   
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
     
@@ -374,7 +376,7 @@ shinyServer(function(input, output,session) {
   observeEvent(input$setnbcluster, {
       if(!is.null(data_res$data))
     {
-      shinyjs::reset("setnmotifs")
+      #shinyjs::reset("setnmotifs")
         data_res_updatesetnmotifs$data=NULL  
       data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
       
