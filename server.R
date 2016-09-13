@@ -1,20 +1,4 @@
-source("www/Functions/mainFunctions.R")
-library(shiny) 
-library(shinydashboard)
-library(ape)
-library(rjson)
-library(jsonlite)
-library(pvclust)
-library(colorspace)
-library(DT)
-library(cluster)
-library(plyr)
-library(shinyjs)
-library(devtools)
-library(rCharts)
-library(Biostrings)
-library(BiocGenerics)
-library("shinyBS")
+
 
 
 shinyServer(function(input, output,session) {
@@ -34,7 +18,10 @@ shinyServer(function(input, output,session) {
   parsingIsSuccessful<-reactiveValues(data = FALSE)
   
   session$onSessionEnded(function() {
-    
+    #restore libPaths
+    #bckpLibPaths=.libPaths()
+    .libPaths(bckpLibPaths)
+    print("End of structureXploR execution")
     stopApp()
   })
   
@@ -68,9 +55,7 @@ shinyServer(function(input, output,session) {
     if(input$focusStructViz==TRUE){
       shinyjs::hide("snmViz",anim=TRUE)
       
-      #GA
-      shinyjs::runjs(HTML("ga('send', 'event', 'Visualize structure', 'Focus on structure visualization','", input$viznmotifs ,"');")); 
-      
+     
     } else { shinyjs::show("snmViz",anim=TRUE)}
     
     if(is.null(data_res$data)){
@@ -84,15 +69,15 @@ shinyServer(function(input, output,session) {
     
     #nb struct maximum for bootstrap 
 
-    if(!is.null(parsedRNA$data$headers))
-    {
-    if (length(parsedRNA$data$headers)>25 & input$bootstrap>0)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 25 structures is required. Please reduce the number of structures for bootstrap.</p>')
-      parsingIsSuccessful$data=F}
-    else
-      { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
-        parsingIsSuccessful$data=T}
-    }
+    #if(!is.null(parsedRNA$data$headers))
+    #{
+    #if (length(parsedRNA$data$headers)>25 & input$bootstrap>0)
+    #{shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 25 structures is required. Please reduce the number of structures for bootstrap.</p>')
+    #  parsingIsSuccessful$data=F}
+    # else
+    #  { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
+    #    parsingIsSuccessful$data=T}
+   # }
     
   })
 
@@ -106,8 +91,8 @@ shinyServer(function(input, output,session) {
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>More than 5 structures is required. Please add more structures.</p>') 
       parsingIsSuccessful$data=F}
     #nb struct minimum
-    if (length(parsedRNA$data$headers)>250)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 250 structures is required. Please reduce the number of structures.</p>') 
+    if (length(parsedRNA$data$headers)>1500)
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 1500 structures is required. Please reduce the number of structures.</p>') 
       parsingIsSuccessful$data=F}
     
     #structure with id identique
@@ -121,7 +106,6 @@ shinyServer(function(input, output,session) {
     else
     { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
       parsingIsSuccessful$data=T}
-    
   })
   
   #Swith to tab 2.explore after clicking on run pipeline
@@ -366,8 +350,6 @@ shinyServer(function(input, output,session) {
       
       data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
     
-      #GA
-      shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Hierarchical clustering','", input$hcExploreParam ,"');"));
       
     }
   })
@@ -380,8 +362,6 @@ shinyServer(function(input, output,session) {
         data_res_updatesetnmotifs$data=NULL  
       data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
       
-      #GA
-      shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Nb. of clusters','", input$setnbcluster ,"');"));
     }
     
   })
@@ -394,9 +374,7 @@ shinyServer(function(input, output,session) {
         data_res_updatesetnmotifs$data=updateStructuralPatterns_with_setnmotifs(data_res$data,data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
         data_res$data=data_res_updatesetnmotifs$data 
         
-        #GA
-        shinyjs::runjs(HTML("ga('send', 'event', 'Clust. Config', 'Top rep. regions','", input$setnmotifs ,"');")); 
-        
+       
         }
   })
   
@@ -467,9 +445,7 @@ shinyServer(function(input, output,session) {
     if (is.null(data_res$data)) return()
     dataPatterns=data_res$data
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Clustering Quality');"));  
-    
+  
     if (is.null(optimalNbCluster$data)){
       optimalNbCluster$data=dataPatterns[[3]]$bestNbClusters
     }
@@ -641,9 +617,6 @@ shinyServer(function(input, output,session) {
     if (is.null(data_res$data)) return()
     dataPatterns=data_res$data
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Cluster features');"));  
-    
     datatemp=signif((dataPatterns[[3]]$clustSize/sum(dataPatterns[[3]]$clustSize))*100,3)
     
     a <- rCharts:::Highcharts$new()
@@ -772,10 +745,18 @@ shinyServer(function(input, output,session) {
     output$tbOfStruct = DT::renderDataTable(
       data_res$data[[4]][,1:5], server = FALSE,
       style = 'bootstrap',filter = 'top',
-      rownames = FALSE, extensions = 'TableTools', options = list(searchHighlight = TRUE,search = list(regex = TRUE),
-      dom = 'T<"clear">lfrtip',
-      tableTools = list(sSwfPath = copySWF())
-      )
+      rownames = FALSE, 
+      #extensions = 'TableTools', 
+      #options = list(searchHighlight = TRUE,search = list(regex = TRUE),
+     extensions = 'Buttons', options = list(
+       searchHighlight = TRUE, search = list(regex = TRUE),
+       dom = 'Bfrtip',
+       buttons = c('copy', 'csv', 'excel')
+     )                
+                     
+      #dom = 'T<"clear">lfrtip',
+      #tableTools = list(sSwfPath = copySWF())
+      #)
     )
   
   #Dendrogram
@@ -809,9 +790,7 @@ shinyServer(function(input, output,session) {
     if (is.null(dataPatterns)) 
     {return(dataPatterns[[5]])}
     else{
-      #GA
-      shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Feature visualization');"));   
-      
+    
       
       snm_x=as.numeric(input$snm_x)
       snm_y=as.numeric(input$snm_y)
@@ -1014,19 +993,13 @@ shinyServer(function(input, output,session) {
   
   observeEvent(input$buttonPrepare1, {
     shinydashboard::updateTabItems(session, "menu","prepare")
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to prepare page (button prepare 1)');"));
   })
   observeEvent(input$buttonExplore, {
     shinydashboard::updateTabItems(session, "menu","explore")
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to explore page');"));
   })
   observeEvent(input$buttonPrepare2, {
     shinydashboard::updateTabItems(session, "menu","prepare")
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Go to prepare page (button prepare 2)');"));
-  })
+ })
   
   onclick("toggleAdvancedrnad", toggle(id = "advancedrnad", anim = TRUE))
   onclick("toggleAdvancedrnabpd", toggle(id = "advancedrnabpd", anim = TRUE))
@@ -1038,9 +1011,7 @@ shinyServer(function(input, output,session) {
       },
       content = function(fileConn) {
         
-            #GA
-            shinyjs::runjs(HTML("ga('send', 'event', 'button', 'Download Filtered struct. in dot-bracket');"));
-        
+       
             cat("", file=fileConn, append=FALSE, sep='')
 
             for (i in 1:length(input$tbOfStruct_rows_all)) 
@@ -1106,9 +1077,7 @@ shinyServer(function(input, output,session) {
     
     data_res$data
     
-    #GA
-    shinyjs::runjs(HTML("ga('send', 'event', 'Explore', 'Cluster and structure hierarchy');"));  
-    
+   
     if(input$bootstrap>0)
     {
       if(input$AU_bootstrap_values==1)

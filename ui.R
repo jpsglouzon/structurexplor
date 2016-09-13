@@ -1,20 +1,6 @@
 print("Starting structureXploR ...")
-library(shiny) 
-library(shinydashboard)
-library(ape)
-library(rjson)
-library(jsonlite)
-library(pvclust)
-library(colorspace)
-library(DT)
-library(cluster)
-library(plyr)
-library(shinyjs)
-library(devtools)
-library(rCharts)
-library(Biostrings)
-library(BiocGenerics)
-library(shinyBS)
+source("www/Functions/mainFunctions.R")
+source("loadLibraries.R")
 
 header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 200, disable = FALSE)
 #header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))
@@ -62,11 +48,8 @@ sidebar <- dashboardSidebar(
               tags$script(src="underscore-min.js"),
               tags$script(src="phylotree.js"),
               tags$script(src="intro.js"),
-              tags$script(src="custom.js"),
+              tags$script(src="custom.js")
               
-              tags$script(src="ga.js")
-              
-
       )
     
   ) # /sidebarMenu

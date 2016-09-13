@@ -25,7 +25,7 @@ computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max
               snm=minSnmForBootstrap
               resComp <- runSNM (pathfile,snm,max_n_motifs)               
             }
-            incProgress(3/allstep, message = "Run the clustering (bootstrap): pleat wait...")
+            incProgress(3/allstep, message = "Run the clustering (bootstrap): please wait...")
           }
           else{
             incProgress(3/allstep, message = "Run the clustering...")
@@ -148,8 +148,22 @@ splitRNA2SeqNStruct<-function (x, ...){
 ######################## 1.run supermotifs model #########################
 runSNM <- function (pathSSdnb,nbSnm,maxNm) {
 
-  pathSNM="www/Functions/supernmotifs_linux64"
-  system2("chmod", args=c("755",pathSNM))
+  
+  platform=Sys.info()[['sysname']]
+  if(platform == "Linux") {
+    pathSNM="www/Functions/supernmotifs_v1_2_linux64"
+    a=system2("chmod", args=c("755",pathSNM))
+  } else if (platform== "Windows"){
+    pathSNM="www/Functions/supernmotifs_v1_2_win64.exe"
+    a=system2("icacls", args=c(pathSNM, "/grant", 'Everyone:F'))
+  } else if (platform== "Darwin"){
+    pathSNM="www/Functions/supernmotifs_v1_2_osx64"
+    a=system2("chmod", args=c("755",pathSNM))
+  } else{
+    print ("Unrecognized operating system.")
+    stopApp()
+  }
+  
 
   outputPath="www/Data/"
   
@@ -485,10 +499,16 @@ dataTableQualClusters<-function(unikidxClustering,clustSize,listSilhouetteCoefPe
   colnames(datass)<-c("Cluster id","Silhouette coef. (avg.)","Size")
   
   datassDatatable=datatable(datass,style = 'bootstrap',filter = 'top'
-                            , rownames = FALSE,extensions = 'TableTools',options = list(searchHighlight = TRUE,search = list(regex = TRUE),
-                                                                                        dom = 'T<"clear">lfrtip',
-                                                                                        tableTools = list(sSwfPath = copySWF())
-                            )
+                            , rownames = FALSE,
+                            #extensions = 'TableTools',options = list(searchHighlight = TRUE,search = list(regex = TRUE),
+                             #                                                           dom = 'T<"clear">lfrtip',
+                             #                                                           tableTools = list(sSwfPath = copySWF())
+                              extensions = 'Buttons', options = list(
+                                searchHighlight = TRUE, search = list(regex = TRUE),
+                                dom = 'Bfrtip',
+                                buttons = c('copy', 'csv', 'excel')
+                              )
+                            
   ) 
   return(datassDatatable) 
 }
@@ -550,10 +570,16 @@ dataTablePattern<-function(unikidxClustering,clustSize,confStabilit,repClustList
 
     datassDatatable=datatable(datass,style = 'bootstrap',filter = 'top',
                             rownames = FALSE,
-                            extensions = 'TableTools', options = list(searchHighlight = TRUE,search = list(regex = TRUE),
-                              dom = 'T<"clear">lfrtip',
-                              tableTools = list(sSwfPath = copySWF())
-                            )                                     
+                            #extensions = 'TableTools', options = list(searchHighlight = TRUE,search = list(regex = TRUE),
+                            #  dom = 'T<"clear">lfrtip',
+                            #  tableTools = list(sSwfPath = copySWF())
+                            #),
+                            extensions = 'Buttons', options = list(
+                              searchHighlight = TRUE, search = list(regex = TRUE),
+                              dom = 'Bfrtip',
+                              buttons = c('copy', 'csv', 'excel')
+                            )
+                            
                             ) 
 
   return(datassDatatable) 
