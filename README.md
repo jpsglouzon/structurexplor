@@ -1,7 +1,8 @@
 # structurexplor #
 
 *An interactive plateform to explore structural features of RNA secondary structures*
-structureXploR is based on the super-n-motifs model design to run on Windows, OSX and most linux distribution (64 bit).
+
+structureXploR is based on the super-n-motifs model and it is design to run on Windows, OSX and most linux distribution (64 bit).
 
 
 ### How to install and run structureXploR ###
