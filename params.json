@@ -1,0 +1,6 @@
+{
+  "name": "Structurexplor",
+  "tagline": "An interactive plateform to explore structural features of RNA secondary structures",
+  "body": "# structurexplor #\r\n\r\n*An interactive plateform to explore structural features of RNA secondary structures*\r\n\r\nstructureXploR is based on the super-n-motifs model and it is design to run on Windows, OSX and most linux distribution (64 bit).\r\n\r\n\r\n### How to install and run structureXploR ###\r\n\r\nDownload, install and run the latest version of R [here](https://cloud.r-project.org/bin/windows/base).\r\n\r\n**Run structureXploR in R console**:\r\n\r\n`install.packages(\"shiny\")`\r\n\r\n`shiny::runGitHub(\"structurexplor\",\"jpsglouzon\")`\r\n\r\nNote: The first execution may take some times.\r\n\r\n\r\n### Post suggestions or issues\r\nPlease report suggestions or issues [here](https://github.com/jpsglouzon/structurexplor/issues)\r\n\r\n#### How to cite structureXploR (soon)\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
