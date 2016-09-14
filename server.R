@@ -1,6 +1,7 @@
 
 
 
+
 shinyServer(function(input, output,session) {
   
   
@@ -18,9 +19,10 @@ shinyServer(function(input, output,session) {
   parsingIsSuccessful<-reactiveValues(data = FALSE)
   
   session$onSessionEnded(function() {
+    packrat::off();
     #restore libPaths
     #bckpLibPaths=.libPaths()
-    .libPaths(bckpLibPaths)
+    #.libPaths(bckpLibPaths)
     print("End of structureXploR execution")
     stopApp()
   })

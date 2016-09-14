@@ -117,7 +117,7 @@ updateStructuralPatterns_with_setnmotifs<-function(patterns,resParseRNA,resComp,
 parseDbFile <- function (pathSSdnb) {
   
   fastaDataraw<-readBStringSet(pathSSdnb,"fasta")
-
+  
   header=names(fastaDataraw)
 
   seqNstruct<-lapply(fastaDataraw, splitRNA2SeqNStruct)
@@ -130,6 +130,11 @@ parseDbFile <- function (pathSSdnb) {
   resultsParseRNA$lengthRNAs=unlist(lapply(seqNstruct, `[[`, 3))
   
   resultsParseRNA=as.data.frame(resultsParseRNA)
+  
+  #pathSSdnb='/home/sehi/Documents/Workspace/Rstudio/structurexplor/www/Data/secStruc_circular_RNA.db'
+  #ncrna <- read.fasta(file = pathSSdnb)
+  
+  #print(ncrna)
   
   return(resultsParseRNA)
 }
@@ -580,7 +585,7 @@ dataTablePattern<-function(unikidxClustering,clustSize,confStabilit,repClustList
                               buttons = c('copy', 'csv', 'excel')
                             )
                             
-                            ) 
+                      ) 
 
   return(datassDatatable) 
 }
