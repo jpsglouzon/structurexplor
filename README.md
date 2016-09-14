@@ -11,7 +11,7 @@ structureXploR is based on the super-n-motifs model and it is design to run on W
 
 2. Download and unzip (or untar) [structurexplor](https://github.com/jpsglouzon/structurexplor/zipball/master).
 
-3. Run structurexplor** with the following R code: `source('/pathTo/runStructurexplor.R')`
+3. Run structurexplor with the following R code: `source('/pathTo/runStructurexplor.R')`
 
 Note: The first execution of structurexplor required the installation of all the necessary libraries. This may take some times.
 
