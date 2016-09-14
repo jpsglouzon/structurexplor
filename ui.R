@@ -1,7 +1,4 @@
-source("loadLibraries.R")
 source("www/Functions/mainFunctions.R")
-
-print("Starting structureXploR ...")
 
 header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 200, disable = FALSE)
 #header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))

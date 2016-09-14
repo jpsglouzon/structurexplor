@@ -5,6 +5,15 @@ if(compareVersion(R_version, R_min_version) < 0){
        "Go to http://cran.r-project.org/ and update your version of R.")
 }
 
+#check for x86_64 version
+CPUtype= "64"
+CPUtype_current=substr(Sys.info()[['machine']], 5, 6)
+if(CPUtype!=CPUtype_current){
+  stop("StructurXploR is only design to run on 64 bit architecture\n")
+}
+
+print("Load/install libraries. Please wait ...")
+
 #install/start packrat
 if (!require("packrat")){ install.packages("packrat",repo="http://cran.rstudio.com/");require("packrat") };
 packrat::on();
@@ -28,3 +37,7 @@ library(rCharts)
 library(BiocGenerics)
 library(Biostrings)
 library(shinyBS)
+
+currentDir=dirname(sys.frame(1)$ofile)
+print("Starting structureXploR in your defautl browser ...")
+runApp(currentDir)
