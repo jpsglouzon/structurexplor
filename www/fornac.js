@@ -498,7 +498,7 @@ function FornaContainer(element, passedOptions) {
     .attr("tabindex", 1)
     .on("keydown.brush", keydown)
     .on("keyup.brush", keyup)
-    .each(function() { this.focus(); })
+    .each(function() {  })
     .append("svg:svg")
     .attr("width", self.options.svgW)
     .attr("height", self.options.svgH)

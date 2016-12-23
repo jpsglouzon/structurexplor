@@ -9,6 +9,8 @@ shinyServer(function(input, output,session) {
   
   pathfile <- reactiveValues(data = NULL)
   data_res <- reactiveValues(data = NULL)
+  data_resTemp <- reactiveValues(data = NULL)
+  
   optimalNbCluster <- reactiveValues(data = NULL)
   data_res_updatesetnmotifs <- reactiveValues(data = NULL)
   guidedTourActivated<- reactiveValues(data = FALSE)
@@ -16,11 +18,11 @@ shinyServer(function(input, output,session) {
   parsedRNA<-reactiveValues(data = NULL)
   parsingIsSuccessful<-reactiveValues(data = FALSE)
   
-  session$onSessionEnded(function() {
-    .libPaths(bckpLibPaths)
-    print("End of structureXploR execution")
-    stopApp()
-  })
+  #session$onSessionEnded(function() {
+  #  .libPaths(bckpLibPaths)
+  #  print("End of structureXploR execution")
+  #  stopApp()
+  #})
   
   observe({
     #To activate/deactive the 'Compute structural patterns' button
@@ -32,7 +34,7 @@ shinyServer(function(input, output,session) {
     
     if (!parsingIsSuccessful$data) {
       shinyjs::disable("go")
-      a=2
+      
     } else { shinyjs::enable("go")}
     
     if (is.null(input$click$header1) || nchar(input$click$header1)==0) {
@@ -85,13 +87,12 @@ shinyServer(function(input, output,session) {
     
     #nb struct minimum
     if (length(parsedRNA$data$headers)<5)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>More than 5 structures is required. Please add more structures.</p>') 
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>More than 5 structures are required. Please add more structures.</p>') 
       parsingIsSuccessful$data=F}
-    #nb struct minimum
-    if (length(parsedRNA$data$headers)>1500)
-    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 1500 structures is required. Please reduce the number of structures.</p>') 
+    #nb struct maximum
+    else if (length(parsedRNA$data$headers)>1000)
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 1000 structures are required. Please reduce the number of structures.</p>') 
       parsingIsSuccessful$data=F}
-    
     #structure with id identique
     else if(length(parsedRNA$data$headers)!=length(unique(parsedRNA$data$headers)))
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Headers of structures must be unique. Please check the headers of your structures.</p>') 
@@ -128,7 +129,7 @@ shinyServer(function(input, output,session) {
     shinyjs::reset("setnmotifs")
     data_res_updatesetnmotifs$data=NULL  
     
-    data_res$data=computeStructuralPatterns(pathfile$data,parsedRNA$data,input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
+    data_res$data<-c(computeStructuralPatterns(pathfile$data,parsedRNA$data,input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster))
     
     #si erreur repointer sur les données
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
@@ -142,7 +143,7 @@ shinyServer(function(input, output,session) {
   
   observeEvent(input$ex_ss_linearRNA_pseudoknots, {
     
-    pathfile$data="www/Data/secStruc_linear_RNA_pseudoknots.db"
+    pathfile$data="./www/Data/secStruc_linear_RNA_pseudoknots.db"
     shinyjs::reset("hcExploreParam")
     
     setnbcluster_options <- list()
@@ -249,42 +250,6 @@ shinyServer(function(input, output,session) {
   }) 
   
   
-  observeEvent(input$ex_ss_1000structures, {
-    
-  
-    pathfile$data="www/Data/1000structures.db"
-    shinyjs::reset("hcExploreParam")
-    
-    setnbcluster_options <- list()
-    setnbcluster_options[["Opt. nb. clusters"]] <- 0
-    setnbcluster_options<-c(setnbcluster_options,as.list(2:30))
-    updateSelectInput(session, "setnbcluster", choices = setnbcluster_options, selected = 0)
-    shinyjs::reset("setnmotifs")
-    data_res_updatesetnmotifs$data=NULL  
-    
-    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
-    optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
-
-   
-        
-    updateTabItems(session, "menu","explore")
-    shinyjs::show("clustConfig")
-    
-    #update snm parameter in feature visualization
-    setsnm_x_options <- list()
-    ncol(data_res$data[[2]]$SuperMotif)
-    setsnm_x_options<-c(setsnm_x_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
-    updateSelectInput(session, "snm_x", choices = setsnm_x_options, selected = 1)
-    
-    setsnm_y_options <- list()
-    ncol(data_res$data[[2]]$SuperMotif)
-    setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
-    updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
-    
-  
-  })   
-  
-  
   #Session
   observeEvent(input$loadSession$datapath, {
     shinyjs::reset("hcExploreParam")
@@ -292,7 +257,7 @@ shinyServer(function(input, output,session) {
     data_res_updatesetnmotifs$data=NULL
     
     data_restemp=readRDS(input$loadSession$datapath)
-    data_res$data=data_restemp$data
+    data_res$data=data_restemp
     
     setnbcluster_options <- list()
     setnbcluster_options[["Opt. nb. clusters"]] <- 0
@@ -329,7 +294,7 @@ shinyServer(function(input, output,session) {
       paste('sessionData-', Sys.Date(), '.R', sep='')
     },
     content = function(fileConn) {
-      saveRDS(data_res, file = fileConn)
+      saveRDS(data_res$data, file = fileConn)
     }
     
     
@@ -345,8 +310,7 @@ shinyServer(function(input, output,session) {
       shinyjs::reset("setnmotifs")
       data_res_updatesetnmotifs$data=NULL  
       
-      data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
-    
+      data_res$data<-c(updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster))
       
     }
   })
@@ -583,17 +547,17 @@ shinyServer(function(input, output,session) {
     datatemp=signif(c(datatemp1,datatemp2),3)
         
     a <- rCharts:::Highcharts$new()
-    a$chart(type = "column")
+    a$chart(type = "column",shadow=FALSE)
     a$xAxis( categories=names(datatemp), labels=list(rotation=-45))
     a$yAxis(title=list(text='Silhouette coef. (avg.)'),max=1)
     a$legend(enabled = FALSE)
-    a$plotOptions(column=list(colorByPoint=TRUE))
+    a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$colors(c('#C0C0C0',dataPatterns[[3]]$colorClusters))
     
     a$data(data=as.vector(datatemp))
 
     
-    a$tooltip(
+    a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               
               return '<table>'
@@ -602,6 +566,7 @@ shinyServer(function(input, output,session) {
               + '<center>'+this.y+'</center>'
               +'</table>';} !#"
     )
+    
     
     a$set(width="100%",heigth='100%')
     
@@ -617,14 +582,14 @@ shinyServer(function(input, output,session) {
     datatemp=signif((dataPatterns[[3]]$clustSize/sum(dataPatterns[[3]]$clustSize))*100,3)
     
     a <- rCharts:::Highcharts$new()
-    a$chart(type = "column")
+    a$chart(type = "column",shadow=FALSE)
     a$xAxis( categories=paste('Cluster', names(datatemp)), labels=list(rotation=-45))
     a$yAxis(title=list(text='Number of structures (%)'), max=max(datatemp))
     a$legend(enabled = FALSE)
-    a$plotOptions(column=list(colorByPoint=TRUE))
+    a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
     a$colors(dataPatterns[[3]]$colorClusters)
-    a$tooltip(
+    a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
               + '<center>'+this.x+'</center>'
@@ -645,14 +610,14 @@ shinyServer(function(input, output,session) {
     datatemp=signif(dataPatterns[[3]]$clustSize,3)
     
     a <- rCharts:::Highcharts$new()
-    a$chart(type = "column")
+    a$chart(type = "column",shadow=FALSE)
     a$xAxis( categories=paste('Cluster', names(datatemp)), labels=list(rotation=-45))
     a$yAxis(title=list(text='Number of structures'), max=max(datatemp))
     a$legend(enabled = FALSE)
-    a$plotOptions(column=list(colorByPoint=TRUE))
+    a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
     a$colors(dataPatterns[[3]]$colorClusters)
-    a$tooltip(
+    a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
               + '<center>'+this.x+'</center>'
@@ -673,14 +638,14 @@ shinyServer(function(input, output,session) {
     datatemp=signif(dataPatterns[[3]]$confStabilit,3)
     
     a <- rCharts:::Highcharts$new()
-    a$chart(type = "column")
+    a$chart(type = "column",shadow=FALSE)
     a$xAxis( categories=paste('Cluster', 1:length(datatemp)), labels=list(rotation=-45))
     a$yAxis(title=list(text='Intra-cluster distance'), max=max(datatemp))
     a$legend(enabled = FALSE)
-    a$plotOptions(column=list(colorByPoint=TRUE))
+    a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
     a$colors(dataPatterns[[3]]$colorClusters)
-    a$tooltip(
+    a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
               + '<center>'+this.x+'</center>'
@@ -709,16 +674,19 @@ shinyServer(function(input, output,session) {
     datatemp = setNames(as.data.frame(bwtLength),nm = NULL)
     
     a = Highcharts$new()
-    a$chart(type = "boxplot")
+    a$chart(type = "boxplot",shadow=FALSE)
     a$data(data = datatemp)
     
     a$xAxis( categories=paste('Cluster',1:dim(datatemp)[2]), labels=list(rotation=-45))
     a$yAxis(title=list(text='Number of nucleotides'))
     a$legend(enabled = FALSE)
-    a$plotOptions(boxplot=list(colorByPoint=TRUE))
+    a$plotOptions(boxplot=list(colorByPoint=TRUE,animation=FALSE))
     a$colors(dataPatterns[[3]]$colorClusters)
     
     a$set(width="100%",heigth='100%')
+    
+    a$tooltip(followPointer=FALSE,shadow=FALSE)
+
     
     return(a)
   })
@@ -748,34 +716,11 @@ shinyServer(function(input, output,session) {
      extensions = 'Buttons', options = list(
        searchHighlight = TRUE, search = list(regex = TRUE),
        dom = 'Bfrtip',
-       buttons = c('copy', 'csv', 'excel')
-     )                
-                     
-      #dom = 'T<"clear">lfrtip',
-      #tableTools = list(sSwfPath = copySWF())
-      #)
+       buttons = list(list(extend='copy',filename='TableOfStructures'), list(extend='csv',filename='TableOfStructures'),list(extend='excel',filename='TableOfStructures'))
+       )
+
     )
   
-  #Dendrogram
-#   output$dendSS <- renderTreewidget({
-#     if (is.null(data_res$data)) return()
-#     dataPatterns=data_res$data
-#     
-#     if (input$bootstrap>0 )
-#     {
-#       #dataPatterns[[3]]$resultClust %>% as.dendrogram %>%  color_branches(.,k=dataPatterns[[3]]$bestNbClusters,col=dataPatterns[[3]]$colorClusters) %>% plot(main = "Cluster dendrogram  (using pvclust and UPGMA) with AU/BP values (%)\n",horiz=T)
-#       #return(dataPatterns[[3]]$resultClust %>% text)
-#     }
-#     else
-#     {
-#       
-#       idxClusteringSortedAccordingToDendrogram=dataPatterns[[3]]$idxClustering[order.dendrogram(as.dendrogram(dataPatterns[[3]]$resultClust))]
-#       headersStructure=paste(labels(dataPatterns[[3]]$resultClust)," cluster",idxClusteringSortedAccordingToDendrogram,sep="")
-#       labels(dataPatterns[[3]]$resultClust)=headersStructure
-#       return((treewidget(as.phylo(dataPatterns[[3]]$resultClust),browser = TRUE )))
-#     }    
-#     })
-    
 #Explore
   
   #Scatplot
@@ -804,24 +749,24 @@ shinyServer(function(input, output,session) {
       clusCurrentIndheader1=which(data_res$data[[1]]$headers %in% input$click$header1)#dissimilarity matrix based on cosine similarity -->test with output of snm (faster)
       clusCurrentIndheader2=which(data_res$data[[1]]$headers %in% input$click$header2)#dissimilarity matrix based on cosine similarity -->test with output of snm (faster)
       distTemp= signif(data_res$data[[3]]$matDissim[clusCurrentIndheader1,clusCurrentIndheader2],digits=3)
-       shinyjs::show("structDistInfo")
       return(
         
-        HTML(input$click$header1,' and ', input$click$header2,' selected.<br>',
-        paste("Structural distance (",input$click$header1," , ",input$click$header2,") = ",distTemp,sep=""))
+          HTML(input$click$header1,' and ', input$click$header2,' selected and displayed below <i class="fa fa-long-arrow-down" style ="color:grey"></i>.<br>',
+          '<strong>',paste("Structural distance (",input$click$header1," , ",input$click$header2,") = ",distTemp,sep=""),'<strong>'
+          )
         )
       }
     else if (!is.null(input$click$header1)&&!(input$click$header1==""))
       {
       return(
-        HTML(input$click$header1,' selected.<br>Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.' )
+        HTML(input$click$header1,' selected and displayed below <i class="fa fa-long-arrow-down" style ="color:grey"></i>.<br> <strong>Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong>' )
         
         )
       }
     else 
       {
       return(
-        HTML('<i class="fa fa-hand-pointer-o"></i> to visualize a secondary structure')
+        HTML('<strong><i class="fa fa-hand-pointer-o"></i> to visualize a secondary structure.</strong>')
       )
       }
   })
@@ -835,20 +780,24 @@ shinyServer(function(input, output,session) {
     dataPatterns[[6]]
     })
   
+  
+  
   #Secondary structures to explore
   output$headerss1<-renderUI({
     if(!is.null(input$click$header1)&&!(input$click$header1==""))
-      {return(paste(input$click$header1,"|",input$click$length1,"nt.","|cluster", input$click$idxClustering1,sep=""))}
-    else{return(HTML('<i class="fa fa-hand-pointer-o"></i> to visualize a secondary structure'))}
+      {return(HTML('<strong>',paste(input$click$header1,"|",input$click$length1,"nt.","|cluster", input$click$idxClustering1,sep=""),'<strong>'))}
+    else{return(HTML('<strong><i class="fa fa-hand-pointer-o"></i> to visualize a secondary structure.</strong> <br/> <em>(see the super-n-motifs representation above <i class="fa fa-long-arrow-up" style ="color:grey"></i>)</em>'))}
   })
   
   output$rna_ss1 <- renderUI({
+    
+    a=HTML('<div style="width:300px;height:400px;border:0px solid #000;"></div>')
     if (is.null(data_res$data)) return()
-    if (is.null(input$click$header1)) return()
+    if (is.null(input$click$header1)) return(a)
     
     dataPatterns=data_res$data
     if (input$click$header1=="") 
-    {return()}
+    {return(a    )}
     else{
     
 
@@ -890,7 +839,7 @@ shinyServer(function(input, output,session) {
         atemp=paste("
                     var container = new FornaContainer(\"#rna_ss1\",
                     {'applyForce': ", tolower(input$applyForce), 
-                    ",'allowPanningAndZooming': true, 'initialSize':[300,400]});
+                    ",'allowPanningAndZooming': false, 'initialSize':[300,400]});
                     var options = {
                     'structure': '",
                     struct1,
@@ -912,8 +861,8 @@ shinyServer(function(input, output,session) {
   
   output$headerss2<-renderUI({
     if(!is.null(input$click$header2)&&!(input$click$header2==""))
-    {return(paste(input$click$header2,"|",input$click$length2,"nt.","|cluster", input$click$idxClustering2,sep=""))}
-    else{return( HTML('Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.' ))}
+    {return(HTML('<strong>',paste(input$click$header2,"|",input$click$length2,"nt.","|cluster", input$click$idxClustering2,sep=""),'<strong>'))}
+    else{return( HTML('<strong>Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong> <br/> <em>(see the super-n-motifs representation above <i class="fa fa-long-arrow-up" style ="color:grey"></i>)</em>' ))}
   })
   
   output$rna_ss2 <- renderUI({

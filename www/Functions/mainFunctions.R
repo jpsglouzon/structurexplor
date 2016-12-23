@@ -156,7 +156,7 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
   
   platform=Sys.info()[['sysname']]
   if(platform == "Linux") {
-    pathSNM="www/Functions/supernmotifs_v1_2_linux64"
+    pathSNM="www/Functions/supernmotifs_ubuntu64_V1.3"
     a=system2("chmod", args=c("755",pathSNM))
   } else if (platform== "Windows"){
     pathSNM="www/Functions/supernmotifs_v1_2_win64.exe"
@@ -168,7 +168,6 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
     print ("Unrecognized operating system.")
     stopApp()
   }
-  
 
   outputPath="www/Data/"
   
@@ -176,7 +175,7 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
  
   #read super-n-motifs representation of SS
   pathMatSuperMotif<-paste(outputPath,"matSnmRep_SSbySnm.csv",sep="")
-  SuperMotif <- read.table(pathMatSuperMotif,header = TRUE,row.names=1,sep = ",")
+  SuperMotif <- read.table(pathMatSuperMotif,header = TRUE,row.names=1,sep = ",",comment.char = "")
   
   #dissim matrix
   pathdissimSS<-paste(outputPath,"matDissim_SSbySS.csv",sep="")
@@ -190,24 +189,24 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
   
   #read singular values
   pathSingularValues<-paste(outputPath,"singularValuesFull_supernmotifs.csv",sep="")
-  singularValues <- read.csv(pathSingularValues,header = TRUE,sep = ",")
+  singularValues <- read.csv(pathSingularValues,header = TRUE,sep = ",",comment.char = "")
   singularValues=singularValues[,-1]
   singularValuesPercent=(singularValues/sum(singularValues))*100  
   
   #read dissimilarity matrix SS*nm
   pathMatDissim_SSbynm<-paste(outputPath,"matDissim_SSbynm.csv",sep="")
-  matDissim_SSbynmRaw <- read.csv(pathMatDissim_SSbynm,header = TRUE,sep = ",")
+  matDissim_SSbynmRaw <- read.csv(pathMatDissim_SSbynm,header = TRUE,sep = ",",comment.char = "")
   matDissim_SSbynm=matDissim_SSbynmRaw[,-1]
   row.names(matDissim_SSbynmRaw)=matDissim_SSbynmRaw[,1]
   matDissim_SSbynmRaw=matDissim_SSbynmRaw[,-1]
 
   #read super-n-motifs rep of all n-motifs
   pathMatSuperMotifnmotifs<-paste(outputPath,"matSnmRep_nmbySnm.csv",sep="")
-  SuperMotifnmotifs <- read.table(pathMatSuperMotifnmotifs,header = TRUE,row.names=1,sep = ",")  
+  SuperMotifnmotifs <- read.table(pathMatSuperMotifnmotifs,header = TRUE,row.names=1,sep = ",",comment.char = "")  
 
   #read matnpos: all nmotifs
   pathMatnmPos<-paste(outputPath,"matnmPos.csv",sep="")
-  matnmPos <- read.csv(pathMatnmPos,header = TRUE,sep = ",",check.names=FALSE,stringsAsFactors=FALSE)
+  matnmPos <- read.csv(pathMatnmPos,header = TRUE,sep = ",",check.names=FALSE,stringsAsFactors=FALSE,comment.char = "")
   colnames(matnmPos)=colnames(matnmPos)[-1]
   matnmPos=matnmPos[,-dim(matnmPos)[2]]
 
@@ -240,10 +239,10 @@ runRNAd <- function (pathSSdnb,rnad) {
   outRNAdistanceRaw=system(commandRNAd,intern=TRUE)
   outRNAdistance=outRNAdistanceRaw[((length(outRNAdistanceRaw)%/%2)+2):(length(outRNAdistanceRaw)-1)]
   
-  dissimSS=do.call(rbind, lapply(strsplit(outRNAdistance," "), as.numeric))
-  dissimSS[upper.tri(dissimSS)] <- 0
-  dissimSS=rbind(rep(0,dim(dissimSS)[1]),dissimSS)
-  dissimSS=cbind(dissimSS,rep(0,dim(dissimSS)[1]))
+  #dissimSS=do.call(rbind, lapply(strsplit(outRNAdistance," "), as.numeric))
+ #dissimSS[upper.tri(dissimSS)] <- 0
+  #dissimSS=rbind(rep(0,dim(dissimSS)[1]),dissimSS)
+  #dissimSS=cbind(dissimSS,rep(0,dim(dissimSS)[1]))
   dissimSS=t(dissimSS)+dissimSS
   
   mds=cmdscale(dissimSS, k = nbOfSingularValuesMDS, eig = TRUE)
@@ -356,8 +355,8 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
 
   #compute cluster representatives: repClustList
   unikidxClustering=unique(idxClustering);
-  repClustList=c()
-  confStabilit=c()
+  repClustList<-c()
+  confStabilit<-c()
   outliers<-list()
   silDistribPerCluster<-c()
   lengthDistribPerCluster<-c()
@@ -505,15 +504,11 @@ dataTableQualClusters<-function(unikidxClustering,clustSize,listSilhouetteCoefPe
   
   datassDatatable=datatable(datass,style = 'bootstrap',filter = 'top'
                             , rownames = FALSE,
-                            #extensions = 'TableTools',options = list(searchHighlight = TRUE,search = list(regex = TRUE),
-                             #                                                           dom = 'T<"clear">lfrtip',
-                             #                                                           tableTools = list(sSwfPath = copySWF())
                               extensions = 'Buttons', options = list(
                                 searchHighlight = TRUE, search = list(regex = TRUE),
                                 dom = 'Bfrtip',
-                                buttons = c('copy', 'csv', 'excel')
+                                buttons = list(list(extend='copy',filename='TableOfClusterSilhouetteCoefAndsize'), list(extend='csv',filename='TableOfClusterSilhouetteCoefAndsize'),list(extend='excel',filename='TableOfClusterSilhouetteCoefAndsize'))
                               )
-                            
   ) 
   return(datassDatatable) 
 }
@@ -542,6 +537,8 @@ dataTableSS<-function(headers,idxClustering,repClustList,sequences,structures,le
   
   datass=cbind.data.frame(headers,idxClustering,repList,as.character(lengthRNAs),outliersList,sequences,structures)
 
+
+  
   colnames(datass)<-c("Header","Cluster","Representatives","Length ","Unusual structures","Sequences","Structures")
   
   datassDatatable=datass
@@ -571,18 +568,13 @@ dataTablePattern<-function(unikidxClustering,clustSize,confStabilit,repClustList
   datass<-cbind(unikidxClustering,clustSize,RelConfVar_RelConfVarRank, colnames(repClustList),outlierStr,bestNmotifsForClusters)
   datass=as.data.frame(datass)
   colnames(datass)<-c("Id cluster","Size","Struc. var. rank (value)","Representatives","Unusual structures","Top rep. regions")
-  #colnames(datass)<-c("Id cluster","Size","Struct. var. (highest-lowest)","Representatives","Unusual structures")
 
     datassDatatable=datatable(datass,style = 'bootstrap',filter = 'top',
                             rownames = FALSE,
-                            #extensions = 'TableTools', options = list(searchHighlight = TRUE,search = list(regex = TRUE),
-                            #  dom = 'T<"clear">lfrtip',
-                            #  tableTools = list(sSwfPath = copySWF())
-                            #),
                             extensions = 'Buttons', options = list(
                               searchHighlight = TRUE, search = list(regex = TRUE),
                               dom = 'Bfrtip',
-                              buttons = c('copy', 'csv', 'excel')
+                              buttons = list(list(extend='copy',filename='TableOfClusterFeatures'), list(extend='csv',filename='TableOfClusterFeatures'),list(extend='excel',filename='TableOfClusterFeatures'))
                             )
                             
                       ) 
@@ -613,14 +605,14 @@ scatPlotSNM<-function(x,y,xnmotifs,ynmotifs,indx,indy,bestNmotifsForClusters_pos
   {
     temp <- Data_x_y_family_header[Data_x_y_family_header$idxClustering == unikidxClustering[i],]
     a$series(data = toJSONArray2(temp, json = F), name = paste("cluster",unikidxClustering[i]),color=colorClusters[i],
-             marker = list(symbol="circle",radius=5))
+             marker = list(symbol="circle",radius=5.5))
     
     coordCenters<-rbind(coordCenters,Data_x_y_family_header[repClustList[2,i],])
   }
   
   #centers
   a$series(data = toJSONArray2(coordCenters, json = F), name ="Representatives",
-           marker = list(symbol="square",fillColor= '#000000',radius=3))  
+           marker = list(symbol="square",fillColor= '#000000',radius=4))  
 
   #outliers
   coordOutliers<-NULL
@@ -634,17 +626,15 @@ scatPlotSNM<-function(x,y,xnmotifs,ynmotifs,indx,indy,bestNmotifsForClusters_pos
   }
   if (!is.null(coordOutliers))
   { a$series(data = toJSONArray2(coordOutliers, json = F), name ="Unusual structures",
-           marker = list(symbol="triangle",fillColor= '#000000',radius=3)) }
-  
-    #use with svg text in custom.css
-    #a$exporting(fallbackToExportServer=F, allowHTML=T,buttons = list(contextButton=list(text="\uf019; Export",symbol="",
-    #                                                                                  verticalAlign="bottom", y=-35 , align="right",symbolSize= 15)))
+           marker = list(symbol="diamond",fillColor= '#000000',radius=3)) }
 
-  a$xAxis(title = list(text = paste("Super-n-motif X:",format(singularValuesPercent[indx],digits=3, nsmall=3, decimal.mark="."),"% of total variability.",sep=" ")))
+  a$xAxis(title = list(style=list(color='#000000'),
+    text = paste("Super-n-motif X:",format(singularValuesPercent[indx],digits=3, nsmall=3, decimal.mark="."),"% of explained variability.",sep=" ")))
   
-  a$yAxis(title = list(text = paste("Super-n-motif Y:",format(singularValuesPercent[indy],digits=3, nsmall=3, decimal.mark="."),"% of total variability.",sep=" ")))
+  a$yAxis(title = list(style=list(color='#000000'),
+    text = paste("Super-n-motif Y:",format(singularValuesPercent[indy],digits=3, nsmall=3, decimal.mark="."),"% of explained variability.",sep=" ")))
   
-    a$tooltip(followPointer=TRUE,
+    a$tooltip(followPointer=FALSE,shadow=FALSE,
               useHTML = T,
               formatter = "#! function() {
               
@@ -658,6 +648,7 @@ scatPlotSNM<-function(x,y,xnmotifs,ynmotifs,indx,indy,bestNmotifsForClusters_pos
     
     a$plotOptions(
       series = list(
+        animation=FALSE,
         allowPointSelect=TRUE,
         cursor = "pointer", 
         point = list(
@@ -741,7 +732,7 @@ variability<-function(singularValuesPercent,Supermotifs) {
   singularValuesPercent_cumsum=cumsum(as.numeric(singularValuesPercent))
   
   b <- rCharts:::Highcharts$new()
-  b$chart(zoomType = "x")
+  b$chart(zoomType = "x",shadow=FALSE)
   
   b$series(data=t(signif(singularValuesPercent,digits=3)),type='column',name= 'Exp. var.', marker = list(symbol="square"),tooltip=list(valueSuffix='%'))
   b$series(data=t(signif(singularValuesPercent_cumsum,digits=3)),type='spline',name= 'Cum. exp. var.', marker = list(symbol="circle"),tooltip=list(valueSuffix='%'),yAxis = 1)
@@ -755,7 +746,7 @@ variability<-function(singularValuesPercent,Supermotifs) {
   
   b$xAxis(
 
-          title = list(text = "Super-n-motifs "),
+          title = list(style=list(color='#000000'),text = "Super-n-motifs "),
           
           plotBands=list( 
             label=list(text="Super-n-motifs retained",rotation= 90,textAlign= 'left'),
@@ -769,22 +760,23 @@ variability<-function(singularValuesPercent,Supermotifs) {
 
   b$yAxis(list(
           
-          list(title = list(text = "Explained variability"), replace=F, labels=list(format='{value} %')),
-          list(title = list(text = "Cumulative explained variability"),opposite= TRUE,max=100, labels=list(format='{value} %'))
+          list(title = list(style=list(color='#000000'),text = "Explained variability"), replace=F, labels=list(format='{value} %')),
+          list(title = list(style=list(color='#000000'),text = "Cumulative explained variability"),opposite= TRUE,max=100, labels=list(format='{value} %'))
           
           )
   )
           
           #startOnTick= FALSE)
   
-  b$tooltip(shared=TRUE)
+  b$tooltip(shared=TRUE,followPointer=FALSE,shadow=FALSE)
   
   b$plotOptions(
+    
     spline = list(
-      pointStart=1
+      pointStart=1,animation=FALSE
     ),
     column = list(
-      pointStart=1
+      pointStart=1,animation=FALSE
     )
   )
 

@@ -1,11 +1,18 @@
+packList=c('shiny','rmarkdown','devtools','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS','rCharts','BiocGenerics','Biostrings')
+lapply(packList, require, character.only = TRUE)
 
-header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 200, disable = FALSE)
+source("www/Functions/mainFunctions.R")
+
+
+header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 182, disable = FALSE)
+#header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))), disable = FALSE)
+
 #header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))
 
 #Sidebar elements for the search visualizations
 
 sidebar <- dashboardSidebar(
-  width = 200,
+  width = 182,
  # tags$em(h4(align="center",strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),
   sidebarMenu(id="menu",
     menuItem(strong("Home"),tabName = "about", icon = icon("home")),
@@ -63,24 +70,24 @@ body <- dashboardBody(
     tabItem(tabName = "about",
 
             div(id="mainPanelStructurXploR",style='background-color:white;'
-                ,br(),br(),br(),br(),
+                ,br(),br(),
                 
             fluidRow(
-                  
-              div(id="step11",
+              column(12,
               tags$h1(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')),align="center",style = "font-size:50pt;"),br(),
               #p("StructureXpl",icon("gears","fa-stack-1x"),"R"),
-              em(tags$h1("An interactive plateform to explore structural features of RNA secondary structures",align="center")),br()
+              em(tags$h1("An interactive plateform to explore structural features of RNA secondary structures",align="center")),br(),
+               tags$h2(strong("Get started with your secondary structures"),align="center")
               ),
-
-            tags$h2(strong("Get started with your secondary structures"),align="center"),
+            
             fluidRow(
               column(12,align="center",
                      h4(actionButton("buttonPrepare1","Prepare",icon("gears"),class="btn-primary",style='font-size:250%;color:white'),
                      actionButton("buttonExplore","Explore",icon("compass"),class="btn-success",style='font-size:250%;color:white;margin-left: 50px'))
-              ))
-              ),
-            br(),br(),br(),br()
+                    )
+               )
+            ),
+            br(),br()
             ),
 
             div(id="step12",
@@ -140,7 +147,7 @@ body <- dashboardBody(
             hr(),  
             tags$h2(strong("About ", HTML('StructureXpl<i class="fa fa-compass"></i>R')),align="center"),
             tags$h3(align="center",
-                    HTML('StructureXpl<i class="fa fa-compass"></i>R (v0.3)'),
+                    HTML('StructureXpl<i class="fa fa-compass"></i>R'),
                     "is maintained by Jean-Pierre Glouzon ",HTML('  <a href="https://github.com/jpsglouzon" target="_blank"><i class="fa fa-github"></i></a>'),br(),
                     "Suggestions or issues can be reported ",HTML('  <a href="https://github.com/jpsglouzon/structurexplor/issues" target="_blank">here</a>'),br(),br(),
                   
@@ -166,7 +173,7 @@ body <- dashboardBody(
                         hr(),
                         fluidRow(column(12,
                                         div(style="height: 60px;",
-                                          fileInput("pathDbFile", label = tags$h5(icon("reply-all","fa-rotate-180"),strong("Enter your RNA secondary structures in "), HTML(' <a href="http://ultrastudio.org/en/Dot-Bracket_Notation" target="_blank">dot-bracket</a> ') ),
+                                          fileInput("pathDbFile", label = tags$h5(icon("reply-all","fa-rotate-180"),strong("Enter your RNA secondary structures in "), HTML(' <a href="http://ultrastudio.org/en/Dot-Bracket_Notation" target="_blank">dot-bracket</a> '), '.'),
                                                     accept = c(
                                                       'text/plain',
                                                       '.db',
@@ -175,16 +182,15 @@ body <- dashboardBody(
                                                       )
                                                     )
                                         ),
-                                        #br(),br(),
-                                        #HTML('<code><textarea id="rnaDBinputTxt1" rows="13" cols="400" placeholder="Enter or paste RNA structures..."></textarea></code>'), 
                                         br(),
                                         div(id="validateStruct",""),
                                         br(),
-                                        actionButton("go","Compute structural features",icon("play-circle")),
-                                        br()
+                                        actionButton("go","Compute structural features",icon("play-circle"))
                                       )
                                 ),
                         br(),
+                        HTML('<h6><em><i class="fa fa-info" style ="color:grey"></i> Min. (max) nb. of structures : 5 (1000). <br/> 
+                        <i class="fa fa-info" style ="color:grey"></i>  Parsing and computing features of more than 200 structures can take some times.</em><h6>'),
                         hr(),
                         fluidRow(column(6,
                                         strong(icon("pencil"),"Run examples"),": ",br(),
@@ -235,7 +241,7 @@ body <- dashboardBody(
                   )
             ),
             column(6,
-                  box(title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Structural comparison parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
+                  box(width=6,title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Structural comparison parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
                       collapsed=TRUE,
                       fluidRow(
                         shinyjs::hidden(
@@ -284,7 +290,7 @@ body <- dashboardBody(
                         )
                       )
                   ),
-                  box(title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Clustering and boostrap parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
+                  box(width=6,title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Clustering and boostrap parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
                       collapsed=TRUE,
                       fluidRow(
                         column(6,
@@ -298,8 +304,9 @@ body <- dashboardBody(
                                            , selected = 10)
                         )
                       ),
-                      selectInput("bootstrap", label = tags$h6("Nb. of bootstrap rep." ), 
-                                  choices = list("0" = 0,"1000" = 1000), selected = 0)
+                      
+                      shinyjs::hidden(selectInput("bootstrap", label = tags$h6("Nb. of bootstrap rep." ), 
+                                  choices = list("0" = 0,"1000" = 1000), selected = 0))
                       ,
                       conditionalPanel(
                         condition = "input.bootstrap == 1000",
@@ -339,7 +346,7 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                   )
                 ,
                   box(width=12,
-                    shiny::icon("warning"),strong(HTML('StructureXpl<i class="fa fa-compass"></i>R'),' require curated/validated structures'),
+                    shiny::icon("warning"),strong(HTML('StructureXpl<i class="fa fa-compass"></i>R'),' requires curated/validated structures'),
                     br(),
                     'Use MFE (Minimum Free Energy) structures or centroids of structure ensemble  with caution since they are error-prones and may lead to spurious structural patterns.'
                   )
@@ -349,12 +356,12 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
     ),
     tabItem(tabName = "explore",
             fluidRow(
-            conditionalPanel("input.go==0&&input.ex_ss_linearRNA_pseudoknots==0&&input.ex_ss_circularRNA==0&&input.ex_ss_linearRNA_g4==0&&input.ex_ss_1000structures==0&&output.sessionDataLoaded==0", 
+            conditionalPanel("input.go==0&&input.ex_ss_linearRNA_pseudoknots==0&&input.ex_ss_circularRNA==0&&input.ex_ss_linearRNA_g4==0&&output.sessionDataLoaded==0", 
                              tags$em(tags$h3("Please,", strong(" prepare your secondary structures "),"in the first place.",align = "center")),
                              fluidRow(column(12, align="center",
                              actionButton("buttonPrepare2","Prepare",icon("gears"),class="btn-primary",style='font-size:250%;color:white')))
             ),
-            conditionalPanel("input.go>0||input.ex_ss_linearRNA_pseudoknots>0||input.ex_ss_circularRNA>0||input.ex_ss_linearRNA_g4>0||input.ex_ss_1000structures>0||output.sessionDataLoaded==1",
+            conditionalPanel("input.go>0||input.ex_ss_linearRNA_pseudoknots>0||input.ex_ss_circularRNA>0||input.ex_ss_linearRNA_g4>0||output.sessionDataLoaded==1",
                                              
             tabBox( title = tagList(shiny::icon("compass"), "Explore"),
               id = "tabStructureXploR",width = 12,
@@ -425,27 +432,6 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                                 )
                        ),
               tabPanel(title = tagList(icon("share-alt","fa-rotate-180"), "Cluster features"),value = "3", 
-                       
-                       actionLink("clusterFeat", "Info. on cluster Features",icon("info-circle")),br(),
-                       bsModal("modalclusterFeat", strong("Clustering quality and silhouette coefficient"), "clusterFeat", size = "medium",
-                               tags$ul(
-                                 tags$li(
-                                   strong("Structural variability of cluster (Struct. var.)")," yield information about how close to each other are the structures of a cluster . It is computed as the average distance between cluster members which is the intra-cluster distance. 
-                                                          The rank represents the relative order of structural variabily of cluster from the one with the highest variability (1) to the lowest (n)."
-                                 ), 
-                                 tags$li(
-                                   strong("Representative secondary structure of cluster (Representatives)")," is the structure that summarize structural features of a cluster. It is the closest structure to the cluster centroïde."
-                                 ),
-                                 tags$li(
-                                   strong("Unusual secondary structures of cluster (Unusual structures)")," are structures with a rather different shape relative to the other members of the cluster. An unusual structure is considered as having a very low density relative to member of its cluster. Density around a structure is the mean distance between a structure and members of its cluster. "
-                                 ),                                                  
-                                 tags$li(
-                                   strong("Top representatives regions (Top rep. regions) ")," are the n-motifs list that best describe structural features of cluster."
-                                 )                                                
-                               ),
-                               HTML('The ','<a href="https://ramnathv.github.io/rCharts/" target="_blank"> rCharts</a>',', ', '<a href="http://www.highcharts.com/" target="_blank"> Highcharts</a>' , ' and ' ,'<a href="https://rstudio.github.io/DT/" target="_blank"> DT</a>' )  ," libraries are used to visualize cluster features."
-                       ), br(),
-                       
                        fluidRow(
                             column(4,
                                    box(title = strong("Cluster size"), width = NULL, solidHeader = TRUE, status = "primary",
@@ -465,7 +451,25 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                                   )
                        ),
                        box(title = strong("Table of cluster features"), width = NULL, solidHeader = TRUE, status = "warning",
-
+                           actionLink("clusterFeat", "Info. on cluster Features",icon("info-circle")),br(),
+                           bsModal("modalclusterFeat", strong("Cluster features"), "clusterFeat", size = "medium",
+                                   tags$ul(
+                                     tags$li(
+                                       strong("Structural variability of cluster (Struct. var.)")," yield information about how close to each other are the structures of a cluster . It is computed as the average distance between cluster members which is the intra-cluster distance. 
+                                                          The rank represents the relative order of structural variabily of cluster from the one with the highest variability (1) to the lowest (n)."
+                                     ), 
+                                     tags$li(
+                                       strong("Representative secondary structure of cluster (Representatives)")," is the structure that summarize structural features of a cluster. It is the closest structure to the cluster centroïde."
+                                     ),
+                                     tags$li(
+                                       strong("Unusual secondary structures of cluster (Unusual structures)")," are structures with a rather different shape relative to the other members of the cluster. An unusual structure is considered as having a very low density relative to member of its cluster. Density around a structure is the mean distance between a structure and members of its cluster. "
+                                     ),                                                  
+                                     tags$li(
+                                       strong("Top representatives regions (Top rep. regions) ")," are the n-motifs list that best describe structural features of cluster."
+                                     )                                                
+                                   ),
+                                   HTML('The ','<a href="https://ramnathv.github.io/rCharts/" target="_blank"> rCharts</a>',', ', '<a href="http://www.highcharts.com/" target="_blank"> Highcharts</a>' , ' and ' ,'<a href="https://rstudio.github.io/DT/" target="_blank"> DT</a>' )  ," libraries are used to visualize cluster features."
+                           ),br(),
                            fluidRow(column(12,
                                            div(id="step51",
 
@@ -482,51 +486,70 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                          column(8,
                                 
                                 fluidRow(column(6,
-                                                actionLink("infoSnmViz", "Info. on the super-n-motifs visualization",icon("info-circle")),br(),
-                                                bsModal("modalinfoSnmViz", strong("Information on the super-n-motifs visualization"), "infoSnmViz", size = "medium",
+                                                actionLink("infoSnmViz", "Info. on the super-n-motifs representation",icon("info-circle")),br(),
+                                                bsModal("modalinfoSnmViz", strong("Information on the super-n-motifs representation"), "infoSnmViz", size = "large",
+                                                        "Visulizations provided by the super-n-motifs representation:",br(),
+                                                        tags$ul(
+                                                          tags$li(
+                                                            strong("The scatter plot of structures"),
+                                                            "facilitate exploration of the relative structural distance between structures considering two selected super-n-motifs denoted by super-n-motifs X (X axis) and super-n-motifs Y (Y axis).",
+                                                            "Structures are typically represented by a set of n super-n-motifs where each super-n-motif is a specific combination of motifs (for instance stems or hairpin loops) capturing the most essential structural features of RNA.",
+                                                            "The percentage of explained variability associated with each super-n-motifs is discussed in the paragraph 'The bar plot of explained variability'."
+                                                             ),
+                                                          tags$li(
+                                                            strong("The structural distance"),
+                                                            "between two selected structures is displayed on top of the scatter plot. of structures",
+                                                            "It shows the cosine dissimilarity considering all the super-n-motifs used to represent the structures.",
+                                                            "It is bounded, [0, 2], where 0 mean that the structures are very similar and 2 signify that they are very dissimilar."
+                                                          ),                                                          
+                                                          tags$li(
+                                                            strong("The bar plot of explained variability"),
+                                                            "refers to the explained variability associated with each super-n-motifs. The explained variability reflect the amount of structural information retain by each super-n-motifs.",
+                                                            "It can also be interpretated as the 'importance' of the super-n-motifs and it is expressed in term of the percentage of varibility (i.e. root square of variance). Each super-n-motifs is ranked according to the percentage of explained varibility",
+                                                            "from the super-n-motifs 1 having the highest percentage to the last super-n-motifs having the lowest percentage."
+                                                          )
+                                                        ),
                                                         HTML('The ','<a href="https://ramnathv.github.io/rCharts/" target="_blank"> rCharts</a> ' , ' and' ,'<a href="http://www.highcharts.com/" target="_blank"> Highcharts</a> ')  ," libraries are used to visualize the super-n-motifs representation."
-                                                )
-                                               ),
+                                                
+                                               )
+                                              ),
                                          column(6,align="right",actionButton("export-scatplotsnm-svg","SVG",icon("download"))
                                                 )
                                          ),
-                                 tags$em(tags$h5(strong(uiOutput("distHeader1Header2")),
-                                                
-                                                 shinyjs::hidden(actionLink("structDistInfo", "Info. on structural distance",icon("info-circle"))),br(),align="center"
+                                 tags$em(tags$h5(uiOutput("distHeader1Header2"),
+                                                align="center"
                                                  )
                                          ),
-                                bsModal("modalstructDistInfo", strong("Structural distance information"), "structDistInfo", size = "medium",
-                                        strong("Structural distance (struct. a,struct. b) "),"is shown when two structures are selected.
-                                                It represents the cosine dissimilarity, bounded [-1,1], between pairs of structures 
-                                                in the space defined by the super-n-motifs retained."),
 
                                 showOutput("scatplotsnm", "highcharts"),
                                 
                                 fluidRow( 
                                   
-                                  column(4,""
+                                  #column(4,""
                                         
-                                      ),
-                                  column(2,align="center",
+                                  #    ),
+                                  column(3,align="center",
                                          selectInput("snm_x", label = tags$strong(tags$h6("Super-n-motifs X")),
                                                        choices = list("1"=1,"2" = 2, "3" = 3, "4" = 5, "6" = 6, "7" = 7, "8" = 8,"9"=9,
                                                                       "10"=10,"11"=11,"12"=12,"13"=13,"14"=14,"15"=15)
                                                        , selected = 1)
                                          ),
-                                column(2,align="center",
+                                column(3,align="center",
                                          selectInput("snm_y", label = tags$strong(tags$h6("Super-n-motifs Y")), 
                                                      choices = list("1"=1,"2" = 2, "3" = 3, "4" = 5, "6" = 6, "7" = 7, "8" = 8,"9"=9,
                                                                     "10"=10,"11"=11,"12"=12,"13"=13,"14"=14,"15"=15)
                                                      , selected = 2)
                                         ),
-                                column(4,
+                                column(6,
                                        #strong("Control")," : ",
                                          tags$ul(
                                            tags$li(strong("Zoom"),": drag out a rectangle in the chart "
                                            ), 
                                            tags$li(strong("Show/hide elements of legend "),": click on legend element."
-                                           )                                               
-                                         )
+                                           )
+                                         ),
+                                       HTML('<h6><em><i class="fa fa-info" style ="color:grey"></i>  Generating visualization of structures with more than 200 nt. can take some times.</em></h6>')
+                                       
                                        )
                                )
                                ),
@@ -567,15 +590,16 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                                 fluidRow(
                                   column(6,
                                           div(id="headerss1_test",
-                                          tags$em(tags$h5(strong(uiOutput("headerss1")),align="center"))),
+                                          tags$em(tags$h5(uiOutput("headerss1"),align="center"))),
                                           fluidRow(column(12,align="right",
                                                           downloadButton('exportdbStruct1', "Dot-bracket"),
                                                           actionButton("export-rna_ss1-svg","SVG",icon("download"))
                                                           )),
-                                          fluidRow(column(12,htmlOutput("rna_ss1")))
+                                          
+                                          fluidRow(column(12,uiOutput("rna_ss1")))
                                           ),
                                   column(6,
-                                          tags$em(tags$h5(strong(uiOutput("headerss2")),align="center")),
+                                          tags$em(tags$h5(uiOutput("headerss2"),align="center")),
                                           fluidRow(column(12,align="right",
                                                           downloadButton('exportdbStruct2', "Dot-bracket"),
                                                           actionButton("export-rna_ss2-svg","SVG",icon("download"))

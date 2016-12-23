@@ -2,7 +2,4 @@
 .Rhistory
 .RData
 .Ruserdata
-rsconnect
-localLib
-packrat/lib*/
-structurexplor.Rproj
+README.html
