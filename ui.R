@@ -4,7 +4,7 @@ lapply(packList, require, character.only = TRUE)
 source("www/Functions/mainFunctions.R")
 
 
-header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),titleWidth = 182, disable = FALSE)
+header <- dashboardHeader(title = tagList(tags$em(strong(HTML('Structurexpl<i class="fa fa-compass"></i>R')))),titleWidth = 182, disable = FALSE)
 #header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))), disable = FALSE)
 
 #header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))
@@ -74,7 +74,7 @@ body <- dashboardBody(
                 
             fluidRow(
               column(12,
-              tags$h1(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')),align="center",style = "font-size:50pt;"),br(),
+              tags$h1(strong(HTML('Structurexpl<i class="fa fa-compass"></i>R')),align="center",style = "font-size:50pt;"),br(),
               #p("StructureXpl",icon("gears","fa-stack-1x"),"R"),
               em(tags$h1("An interactive plateform to explore structural features of RNA secondary structures",align="center")),br(),
                tags$h2(strong("Get started with your secondary structures"),align="center")
@@ -145,9 +145,9 @@ body <- dashboardBody(
                                            
             ),
             hr(),  
-            tags$h2(strong("About ", HTML('StructureXpl<i class="fa fa-compass"></i>R')),align="center"),
+            tags$h2(strong("About ", HTML('Structurexpl<i class="fa fa-compass"></i>R')),align="center"),
             tags$h3(align="center",
-                    HTML('StructureXpl<i class="fa fa-compass"></i>R'),
+                    HTML('Structurexpl<i class="fa fa-compass"></i>R'),
                     "is maintained by Jean-Pierre Glouzon ",HTML('  <a href="https://github.com/jpsglouzon" target="_blank"><i class="fa fa-github"></i></a>'),br(),
                     "Suggestions or issues can be reported ",HTML('  <a href="https://github.com/jpsglouzon/structurexplor/issues" target="_blank">here</a>'),br(),br(),
                   
@@ -165,7 +165,7 @@ body <- dashboardBody(
                         br(),
                         tags$ol(
                           tags$li(icon("reply-all","fa-rotate-180"),strong('Select your file of RNA scondary structures'),' : ' ,strong('click') ,' on',strong(' browse '),' button'),
-                          tags$li(strong('Adjust '),' (or use default) ', icon("share-alt","fa-rotate-180"),strong(' structural comparison and clustering with bootstrap parameters') ,'(boxes below). '),
+                          tags$li(strong('Adjust '),' (or use default) ', icon("share-alt","fa-rotate-180"),strong(' structural comparison parameters') ,'(boxes below). '),
                           tags$li('Press',strong(icon("play-circle"),'to compute structural features'), ' button and explore','.')
                         ),
                         'Alternatively' ,strong(icon("pencil"),'run examples'),' or ', strong(icon("cube"),' load session data'),' and explore.',
@@ -190,7 +190,7 @@ body <- dashboardBody(
                                 ),
                         br(),
                         HTML('<h6><em><i class="fa fa-info" style ="color:grey"></i> Min. (max) nb. of structures : 5 (1000). <br/> 
-                        <i class="fa fa-info" style ="color:grey"></i>  Parsing and computing features of more than 200 structures can take some times.</em><h6>'),
+                        <i class="fa fa-info" style ="color:grey"></i>  Parsing and computing features of more than 200 structures can take some time.</em><h6>'),
                         hr(),
                         fluidRow(column(6,
                                         strong(icon("pencil"),"Run examples"),": ",br(),
@@ -290,7 +290,7 @@ body <- dashboardBody(
                         )
                       )
                   ),
-                  box(width=6,title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Clustering and boostrap parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
+                  box(width=6,title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Clustering parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
                       collapsed=TRUE,
                       fluidRow(
                         column(6,
@@ -310,7 +310,7 @@ body <- dashboardBody(
                       ,
                       conditionalPanel(
                         condition = "input.bootstrap == 1000",
-                        HTML('<p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i> Bootstrap computation may take some times.</p>')
+                        HTML('<p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i> Bootstrap computation may take some time.</p>')
                         ),
                       
                       
@@ -321,21 +321,22 @@ body <- dashboardBody(
                                 tags$li(strong("Hierarchical clustering")," refers to the linkage function uses to compute the clustering. For further details on the silhouette coefficient, please see the function ", HTML(' <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/hclust.html" target="_blank">hclust</a>. ')
                                 ), 
                                 tags$li( strong("Maximum number of clusters (Max. nb. of clusters)")," defines the maximum number of clusters to be computed in order to find the best one."
-                                ),
-                                tags$li(strong("Number of bootstrap replications (Nb. bootstrap rep.)")," represent the number of times the bootstrap is performed. It is computed with the function ", HTML(' <a href="https://cran.r-project.org/web/packages/pvclust/index.html" target="_blank">pvclust</a>. '),
-                                                'Bootstrap computation requires less than 50 structures as inputs and more than 5 computed super-n-motifs (Nb. of super-n-motifs parameter of the Super-n-motifs model). When the minimum number of computed super-n-motifs is not reach it is automatically set to 5.'
-                                ) 
+                                )
+                                #,
+                                #tags$li(strong("Number of bootstrap replications (Nb. bootstrap rep.)")," represent the number of times the bootstrap is performed. It is computed with the function ", HTML(' <a href="https://cran.r-project.org/web/packages/pvclust/index.html" target="_blank">pvclust</a>. '),
+                                #                'Bootstrap computation requires less than 50 structures as inputs and more than 5 computed super-n-motifs (Nb. of super-n-motifs parameter of the Super-n-motifs model). When the minimum number of computed super-n-motifs is not reach it is automatically set to 5.'
+                                #) 
                               )
                           )
                       )
                   ,
                   box(width=12,
-                  strong(icon("reply-all","fa-rotate-180"), HTML('StructureXpl<i class="fa fa-compass"></i>R')," supports structures of linear and circular RNA, pseudoknots and G-quadruplexes motifs"),
+                  strong(icon("reply-all","fa-rotate-180"), HTML('Structurexpl<i class="fa fa-compass"></i>R')," supports structures of linear and circular RNA, pseudoknots and G-quadruplexes motifs"),
                   br(),
                   "RNA secondary structures must be in " ,HTML(' <a href="http://ultrastudio.org/en/Dot-Bracket_Notation" target="_blank">dot-bracket</a> ') ,' format',":",br(),
                   HTML('<code><textarea readonly id="rnaDBinputTxt2" rows="3" cols="200" placeholder="Enter RNA structures in dot-bracket...">>c_rnaID1
-GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
-.(((..{{.....AAA..)))..((((...aaa....}}.))..((((.++.++.++...))))))..</textarea></code>'),
+GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
+.(((..{{.....AAA..)))..((((...aaa....}}.))..((((.++.++.++.++..))))))..</textarea></code>'),
                   h5(align="center",strong(textOutput("rna_prep1_Title"))),
                   htmlOutput("rna_prep1"),
                   br(),
@@ -346,7 +347,7 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                   )
                 ,
                   box(width=12,
-                    shiny::icon("warning"),strong(HTML('StructureXpl<i class="fa fa-compass"></i>R'),' requires curated/validated structures'),
+                    shiny::icon("warning"),strong(HTML('Structurexpl<i class="fa fa-compass"></i>R'),' requires curated/validated structures'),
                     br(),
                     'Use MFE (Minimum Free Energy) structures or centroids of structure ensemble  with caution since they are error-prones and may lead to spurious structural patterns.'
                   )
@@ -548,7 +549,7 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGUUUUUUGG
                                            tags$li(strong("Show/hide elements of legend "),": click on legend element."
                                            )
                                          ),
-                                       HTML('<h6><em><i class="fa fa-info" style ="color:grey"></i>  Generating visualization of structures with more than 200 nt. can take some times.</em></h6>')
+                                       HTML('<h6><em><i class="fa fa-info" style ="color:grey"></i>  Generating visualization of structures with more than 200 nt. can take some time.</em></h6>')
                                        
                                        )
                                )

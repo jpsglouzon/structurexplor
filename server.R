@@ -759,7 +759,7 @@ shinyServer(function(input, output,session) {
     else if (!is.null(input$click$header1)&&!(input$click$header1==""))
       {
       return(
-        HTML(input$click$header1,' selected and displayed below <i class="fa fa-long-arrow-down" style ="color:grey"></i>.<br> <strong>Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong>' )
+        HTML(input$click$header1,' selected and displayed below <i class="fa fa-long-arrow-down" style ="color:grey"></i>.<br> <strong>Ctrl/Cmd key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong>' )
         
         )
       }
@@ -839,7 +839,7 @@ shinyServer(function(input, output,session) {
         atemp=paste("
                     var container = new FornaContainer(\"#rna_ss1\",
                     {'applyForce': ", tolower(input$applyForce), 
-                    ",'allowPanningAndZooming': false, 'initialSize':[300,400]});
+                    ",'allowPanningAndZooming': true, 'initialSize':[300,400]});
                     var options = {
                     'structure': '",
                     struct1,
@@ -862,7 +862,7 @@ shinyServer(function(input, output,session) {
   output$headerss2<-renderUI({
     if(!is.null(input$click$header2)&&!(input$click$header2==""))
     {return(HTML('<strong>',paste(input$click$header2,"|",input$click$length2,"nt.","|cluster", input$click$idxClustering2,sep=""),'<strong>'))}
-    else{return( HTML('<strong>Ctrl key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong> <br/> <em>(see the super-n-motifs representation above <i class="fa fa-long-arrow-up" style ="color:grey"></i>)</em>' ))}
+    else{return( HTML('<strong>Ctrl/Cmd key+ <i class="fa fa-hand-pointer-o"></i> to visualize a second secondary structure.</strong> <br/> <em>(see the super-n-motifs representation above <i class="fa fa-long-arrow-up" style ="color:grey"></i>)</em>' ))}
   })
   
   output$rna_ss2 <- renderUI({
