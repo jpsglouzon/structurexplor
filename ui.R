@@ -3,7 +3,6 @@ lapply(packList, require, character.only = TRUE)
 
 source("www/Functions/mainFunctions.R")
 
-
 header <- dashboardHeader(title = tagList(tags$em(strong(HTML('Structurexpl<i class="fa fa-compass"></i>R')))),titleWidth = 182, disable = FALSE)
 #header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))), disable = FALSE)
 
@@ -696,8 +695,8 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                                                   
                                                   </div>
                                                   <div class="col-md-3">
-                                                  <input type="text" id="branch_filter" class="form-control" placeholder="&#xf0b0; Filter branches on">
-                                                  <label class="pull-right">Selected <span class="badge" id="selected_branch_counter">0</span> and filtered <span class="badge" id="selected_filtered_counter">0</span> branches</label>
+                                                  <input type="text" id="branch_filter" class="form-control" placeholder="&#xf0b0; Select branches on">
+                                                  <label class="pull-right">Selected <span class="badge" id="selected_filtered_counter">0</span> branches</label>
                                                   
                                                   </div>
                                                   <div class="col-md-3 dropdown">
