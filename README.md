@@ -24,11 +24,11 @@ for Ubuntu 16.04 also called Ubuntu Xenial Xerus.
 `lapply(packList, install.packages, character.only = TRUE);`
 `lapply(packList, require, character.only = TRUE)`
 
-### Supplementay step to run Structurexplor on a local machine ###
+### Supplementary step to run Structurexplor on a local machine ###
 * Start Structurexplor using
 `shiny::runApp("path_to_Structurxplor") `
 
-### Supplementary step to run Structurexplor on a local server ### 
+### Supplementary steps to run Structurexplor on a local server ### 
 
 The middleware open source [ShinyProxy](http://www.shinyproxy.io/) has been used to deploy Structurexplor. 
 
