@@ -18,12 +18,6 @@ shinyServer(function(input, output,session) {
   parsedRNA<-reactiveValues(data = NULL)
   parsingIsSuccessful<-reactiveValues(data = FALSE)
   
-  #session$onSessionEnded(function() {
-  #  .libPaths(bckpLibPaths)
-  #  print("End of structureXploR execution")
-  #  stopApp()
-  #})
-  
   observe({
     #To activate/deactive the 'Compute structural patterns' button
 
@@ -101,6 +95,10 @@ shinyServer(function(input, output,session) {
     else if(length(grep("[0123456789]",parsedRNA$data$structures))>0)
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Numerical characters are not supported. Please check your structures.</p>')  
       parsingIsSuccessful$data=F}
+    #nb struct maximum
+    else if (sum(grepl(';',parsedRNA$data$headers))>0)
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Semi-colon ";" is not supported. Please remove or replace semi-colons in structure header.</p>') 
+      parsingIsSuccessful$data=F}
     else
     { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
       parsingIsSuccessful$data=T}
@@ -129,15 +127,26 @@ shinyServer(function(input, output,session) {
     shinyjs::reset("setnmotifs")
     data_res_updatesetnmotifs$data=NULL  
     
-    data_res$data<-c(computeStructuralPatterns(pathfile$data,parsedRNA$data,input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster))
+    data_res$data=computeStructuralPatterns(pathfile$data,parsedRNA$data,input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
     
     #si erreur repointer sur les données
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
     
     updateTabItems(session, "menu","explore")
-   
     shinyjs::show("clustConfig")
-
+    
+    
+    #update snm parameter in feature visualization
+    setsnm_x_options <- list()
+    ncol(data_res$data[[2]]$SuperMotif)
+    setsnm_x_options<-c(setsnm_x_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
+    updateSelectInput(session, "snm_x", choices = setsnm_x_options, selected = 1)
+    
+    setsnm_y_options <- list()
+    ncol(data_res$data[[2]]$SuperMotif)
+    setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
+    
+    updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
 
   })
   
@@ -171,14 +180,11 @@ shinyServer(function(input, output,session) {
     ncol(data_res$data[[2]]$SuperMotif)
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
     
-
-    
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
     
   }) 
   
   observeEvent(input$ex_ss_circularRNA, {
-    
     
     pathfile$data="www/Data/secStruc_circular_RNA.db"
     shinyjs::reset("hcExploreParam")
@@ -218,7 +224,6 @@ shinyServer(function(input, output,session) {
   }) 
   
   observeEvent(input$ex_ss_linearRNA_g4, {
-    
     
     pathfile$data="www/Data/secStruc_linear_RNA_g4.db"
     shinyjs::reset("hcExploreParam")
@@ -874,8 +879,6 @@ shinyServer(function(input, output,session) {
     if (is.null(dataPatterns)&&is.null(input$click$header2)&&(input$click$header2=="")) 
     {return(dataPatterns[[5]])}
     else{
-      
-      
       struct2=input$click$structure2
       #Gquadruplexes color
       g4PoswithColors=""
@@ -1023,7 +1026,6 @@ shinyServer(function(input, output,session) {
     
     data_res$data
     
-   
     if(input$bootstrap>0)
     {
       if(input$AU_bootstrap_values==1)
@@ -1034,14 +1036,13 @@ shinyServer(function(input, output,session) {
     }else
     {
     inputTree = write.tree( as.phylo(data_res$data[[3]]$resultClust))
+    
     }
     
     inputClust=rjson::toJSON( data_res$data[[3]]$idxClustering)
-
+    
     a=rjson::toJSON(as.character(data_res$data[[3]]$unikidxClustering))
     b=rjson::toJSON(data_res$data[[3]]$colorClusters)
-    
-
     
     atemp=paste('
 // the global tree variable
@@ -1069,8 +1070,6 @@ var coloring_scheme = d3.scale.ordinal()
                 
                 // this will be used to map bootstrap support values to edge thickness
                 var bootstrap_scale = d3.scale.linear().domain ([0,0.5,0.7,0.9,0.95,1]).range ([1,2,3,4,5,6]).interpolate (d3.interpolateRound);
-                
-
 
               //var control 
               var container_id = "#dendSS2";
@@ -1106,9 +1105,8 @@ var coloring_scheme = d3.scale.ordinal()
                 }
                 }
                 }
-                }    
-                
-              
+                }
+
                   var svg=d3.select(container_id).append("svg")
                                  .attr("width",width)
                                  .attr("height",height)
@@ -1555,12 +1553,9 @@ function selection_handler_name_box (e) {
                 ,sep="")
     
    # shinyjs::runjs(HTML(atemp));
-    
-   
+
     a=tags$script(HTML(atemp)) 
-    
-    
-    
+
     return(a)
     
   })

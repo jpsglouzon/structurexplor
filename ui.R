@@ -4,15 +4,9 @@ lapply(packList, require, character.only = TRUE)
 source("www/Functions/mainFunctions.R")
 
 header <- dashboardHeader(title = tagList(tags$em(strong(HTML('Structurexpl<i class="fa fa-compass"></i>R')))),titleWidth = 182, disable = FALSE)
-#header <- dashboardHeader(title = tagList(tags$em(strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))), disable = FALSE)
-
-#header <- dashboardHeader( title = span(tagList(icon("calendar"), "Example")))
-
-#Sidebar elements for the search visualizations
 
 sidebar <- dashboardSidebar(
   width = 182,
- # tags$em(h4(align="center",strong(HTML('StructureXpl<i class="fa fa-compass"></i>R')))),
   sidebarMenu(id="menu",
     menuItem(strong("Home"),tabName = "about", icon = icon("home")),
     menuItem(strong("Prepare"), tabName = "prepare", icon = icon("gears")),
@@ -95,9 +89,6 @@ body <- dashboardBody(
             
                 box(width = 12,status = "warning",
                     fluidRow( 
-                              #column(4,align="center",h3(icon("share-alt","fa-rotate-180 fa-2x"),br(),"Find clusters of related structures")),
-                              #column(4,align="center", h3(icon("check fa-2x"),br(),"Assess cluster quality")),
-                              #column(4,align="center", h3(icon("sliders fa-2x"),br(),"Explore clustering configurations")
                               column(4,align="center",h3(HTML('<i class="fa fa-share-alt" style="color: #619CFF;"></i>'),"Find clusters of related structures" ),
                                      img(src='img/clusters.png',width="60%", height="60%", align = "center",style="box-shadow: 1px 1px 1px 1px  DarkGrey;	border-radius: 10px;")
                               ),
@@ -119,12 +110,6 @@ body <- dashboardBody(
                 br(),
                 box(width = 12, status = "warning",
                     fluidRow( 
-                      #column(4,align="center",h3(icon("sitemap fa-2x" ),br(),"Explore cluster hierarchy" )),
-                      #column(4,align="center",h3(icon("dot-circle-o fa-2x" ),br(),"Identify representative structures" )),
-                      # column(4,align="center",h3(icon("area-chart fa-2x" ),br(),"Visualize representative regions"), 
-                      #        img(src='img/struct.png',width="50%", height="50%", align = "center"),
-                      #        )
-                      
                       column(4,align="center",h3(HTML('<i class="fa fa-sitemap" style="color: #F8766D;"></i>'),"Explore cluster hierarchy" ),
                              img(src='img/tree.png',width="100%", height="130%", align = "center",style="box-shadow: 1px 1px 1px 1px  grey;border-style: solid;border-radius: 10px;")
                              ),
@@ -140,8 +125,6 @@ body <- dashboardBody(
                   br(),
                   em(h4(align="center","and many more features..." ))
                 )
-            
-                                           
             ),
             hr(),  
             tags$h2(strong("About ", HTML('Structurexpl<i class="fa fa-compass"></i>R')),align="center"),
@@ -194,25 +177,21 @@ body <- dashboardBody(
                         fluidRow(column(6,
                                         strong(icon("pencil"),"Run examples"),": ",br(),
                                         conditionalPanel("input.bootstrap==0", 
-                                        actionLink("ex_ss_linearRNA_pseudoknots", "229 struct. from 5S, tRNA and tmRNA (pseudoknots).",icon("arrow-circle-o-right")),br()
+                                        actionLink("ex_ss_linearRNA_pseudoknots", "179 struct. from 6 families: 5S, tRNA, RNAseP, SRP, tmRNA (pseudoknots) and Group II intron.",icon("arrow-circle-o-right")),br()
                                         ),
                                         actionLink("ex_ss_circularRNA", "21 struct. from viroids (circ. RNA).",icon("arrow-circle-o-right")),br(),
                                         conditionalPanel("input.bootstrap==0", 
                                         actionLink("ex_ss_linearRNA_g4", "88 struct. of 5S and struct. with G4.",icon("arrow-circle-o-right")),br()
                                         ),
-                                        #conditionalPanel("input.bootstrap==0", 
-                                        #actionLink("ex_ss_1000structures", "1186 struct. from 5S, HH, tRNA and 16s.",icon("arrow-circle-o-right")),br()
-                                        #),
-                                        
                                         actionLink("exInfo", "Source of structures",icon("info-circle")),br(),
                                         
                                         bsModal("modalExInfo", strong("Source of structures"), "exInfo", size = "medium",
                                                 tags$ul(
-                                                  #tags$li( strong(HTML(' <a href="http://www.rnasoft.ca/strand/" target="_blank">RNASTRAND database</a> ')),
-                                                  #  ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), transfer messenger RNA (tmRNA), HH (Hammerhead Rizobyme) and 16S (16 Ribosomal RNA).'
-                                                  #), 
                                                   tags$li( strong(HTML(' <a href="http://www.rnasoft.ca/strand/" target="_blank">RNASTRAND database</a> ')),
-                                                    ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), transfer messenger RNA (tmRNA) and HH (Hammerhead Rizobyme).'
+                                                           ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), RNAseP (Ribonuclease P RNA), Signal Recognition Particle RNA (SRP) and transfer messenger RNA (tmRNA).'
+                                                  ),
+                                                  tags$li( strong(HTML(' <a href="http://rfam.xfam.org/" target="_blank">RFAM database</a> ')),
+                                                           ' : Group II intron (group-II-D1D4-1).'
                                                   ),
                                                   tags$li(strong(HTML(' <a href="http://scottgroup.med.usherbrooke.ca/G4RNA/" target="_blank">G4RNA database</a> ')),
                                                     ' : Structures with g-quadruplexes (G4).'
@@ -255,19 +234,13 @@ body <- dashboardBody(
                                conditionalPanel(
                                  condition = "input.distChoiceParam == 1",
                                  fluidRow(column(12,h5(strong("The super-n-motifs model")))),
-                                 #fluidRow(
-                                   #column(6,
                                           selectInput("snm", label = tags$h6("Nb. of super-n-motifs"), 
                                                       choices = list("Auto." =0 ,"2" = 2, "3" = 3, "4" = 5, "6" = 6, "7" = 7, "8" = 8,"9"=9,
                                                                      "10"=10,"11"=11,"12"=12,"13"=13,"14"=14,"15"=15,"16"=16,"17"=17,"18"=18,"19"=19,"20"=20)
                                                       , selected = 0),
-                                  #        ),
-                                  # column(6,
                                           selectInput("max_n_motifs", label = tags$h6("Max. level of n-motifs"), 
                                                         choices = list("0-nmotifs" = 0, "1-nmotifs" = 1,
                                                                        "2-nmotifs" = 2), selected = 1)
-                                  #        )
-                                 #)
                                  ,
                                  actionLink("snmParam", "Super-n-motifs parameters",icon("info-circle")),br(),
                                  
@@ -321,10 +294,6 @@ body <- dashboardBody(
                                 ), 
                                 tags$li( strong("Maximum number of clusters (Max. nb. of clusters)")," defines the maximum number of clusters to be computed in order to find the best one."
                                 )
-                                #,
-                                #tags$li(strong("Number of bootstrap replications (Nb. bootstrap rep.)")," represent the number of times the bootstrap is performed. It is computed with the function ", HTML(' <a href="https://cran.r-project.org/web/packages/pvclust/index.html" target="_blank">pvclust</a>. '),
-                                #                'Bootstrap computation requires less than 50 structures as inputs and more than 5 computed super-n-motifs (Nb. of super-n-motifs parameter of the Super-n-motifs model). When the minimum number of computed super-n-motifs is not reach it is automatically set to 5.'
-                                #) 
                               )
                           )
                       )
@@ -436,7 +405,6 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                             column(4,
                                    box(title = strong("Cluster size"), width = NULL, solidHeader = TRUE, status = "primary",
                                      uiOutput("barChartClustSizeProp")
-                                     #uiOutput("barChartClustSize")
                                      )
                                   ),
                             column(4,
@@ -494,17 +462,17 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                                                             strong("The scatter plot of structures"),
                                                             "facilitate exploration of the relative structural distance between structures considering two selected super-n-motifs denoted by super-n-motifs X (X axis) and super-n-motifs Y (Y axis).",
                                                             "Structures are typically represented by a set of n super-n-motifs where each super-n-motif is a specific combination of motifs (for instance stems or hairpin loops) capturing the most essential structural features of RNA.",
-                                                            "The percentage of explained variability associated with each super-n-motifs is discussed in the paragraph 'The bar plot of explained variability'."
+                                                            "The percentage of explained variability associated with each super-n-motifs is discussed in the paragraph 'Structural information associated with the super-n-motifs'."
                                                              ),
                                                           tags$li(
                                                             strong("The structural distance"),
-                                                            "between two selected structures is displayed on top of the scatter plot. of structures",
+                                                            "between two selected structures and involving all dimensions (super-n-motifs) is displayed on top of the scatter plot. of structures",
                                                             "It shows the cosine dissimilarity considering all the super-n-motifs used to represent the structures.",
                                                             "It is bounded, [0, 2], where 0 mean that the structures are very similar and 2 signify that they are very dissimilar."
                                                           ),                                                          
                                                           tags$li(
-                                                            strong("The bar plot of explained variability"),
-                                                            "refers to the explained variability associated with each super-n-motifs. The explained variability reflect the amount of structural information retain by each super-n-motifs.",
+                                                            strong("Structural information associated with the super-n-motifs"),
+                                                            "corresponds to the explained variability associated with each super-n-motifs. The explained variability reflect the amount of structural information retain by each dimension (super-n-motif).",
                                                             "It can also be interpretated as the 'importance' of the super-n-motifs and it is expressed in term of the percentage of varibility (i.e. root square of variance). Each super-n-motifs is ranked according to the percentage of explained varibility",
                                                             "from the super-n-motifs 1 having the highest percentage to the last super-n-motifs having the lowest percentage."
                                                           )
@@ -524,10 +492,6 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                                 showOutput("scatplotsnm", "highcharts"),
                                 
                                 fluidRow( 
-                                  
-                                  #column(4,""
-                                        
-                                  #    ),
                                   column(3,align="center",
                                          selectInput("snm_x", label = tags$strong(tags$h6("Super-n-motifs X")),
                                                        choices = list("1"=1,"2" = 2, "3" = 3, "4" = 5, "6" = 6, "7" = 7, "8" = 8,"9"=9,
@@ -557,8 +521,8 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                                   fluidRow(
                                       column(12,
                                                
-                                              fluidRow(column(6,h4(strong("Explained variability"))),
-                                                       column(6,align="right",actionButton("export-varexplained-svg","SVG",icon("download")))
+                                              fluidRow(column(8,h4(strong("Structural information associated with the super-n-motifs"))),
+                                                       column(4,align="right",actionButton("export-varexplained-svg","SVG",icon("download")))
                                               ),
                                              showOutput("varExp", "highcharts"),
                                              tags$ul(
@@ -770,7 +734,6 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
               )
             
           )
-   # /tabItems
       )
 
     )

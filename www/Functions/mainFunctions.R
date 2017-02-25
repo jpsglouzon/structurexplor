@@ -131,11 +131,6 @@ parseDbFile <- function (pathSSdnb) {
   
   resultsParseRNA=as.data.frame(resultsParseRNA)
   
-  #pathSSdnb='/home/sehi/Documents/Workspace/Rstudio/structurexplor/www/Data/secStruc_circular_RNA.db'
-  #ncrna <- read.fasta(file = pathSSdnb)
-  
-  #print(ncrna)
-  
   return(resultsParseRNA)
 }
 
@@ -179,13 +174,14 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
   
   #dissim matrix
   pathdissimSS<-paste(outputPath,"matDissim_SSbySS.csv",sep="")
-#   dissimSS <- data.matrix(read.table(pathdissimSS, fill=T, sep = ",",  col.names=1:nrow(SuperMotif))) 
-#   dissimSS[is.na(dissimSS)]=0     
-#   dissimSS=rbind(rep(0,nrow(SuperMotif)),dissimSS)     
-#   dissimSS[upper.tri(dissimSS)] <- t(dissimSS)[upper.tri(dissimSS)]
-#   colnames(dissimSS)=row.names(SuperMotif)
-#   rownames(dissimSS)=row.names(SuperMotif)
-  dissimSS<-c()
+  
+   dissimSS <- data.matrix(read.table(pathdissimSS, fill=T, sep = ",",  col.names=1:nrow(SuperMotif))) 
+   dissimSS[is.na(dissimSS)]=0     
+   dissimSS=rbind(rep(0,nrow(SuperMotif)),dissimSS)     
+   dissimSS[upper.tri(dissimSS)] <- t(dissimSS)[upper.tri(dissimSS)]
+   colnames(dissimSS)=row.names(SuperMotif)
+   rownames(dissimSS)=row.names(SuperMotif)
+  #dissimSS<-c()
   
   #read singular values
   pathSingularValues<-paste(outputPath,"singularValuesFull_supernmotifs.csv",sep="")
@@ -285,7 +281,7 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
     SuperMotifRaw=t(SuperMotifRaw)
     SuperMotif=SuperMotifRaw
     
-    dissimSS=as.matrix(cosine(SuperMotif))
+    #dissimSS=as.matrix(cosine(SuperMotif))
     if (maxClust>dim(SuperMotif)[2])
     {
       print("Maximum number of clusters (maxClust) is greater than the nb. of SS. maxClust is set so that maxClust = n.b of SS. -1")
@@ -297,14 +293,9 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
   ####### Hierarchical clustering using pvclust
   if (bootstrap>0 && distChoiceParam==1)
   {
-
-    
     result = pvclust(SuperMotif, method.dist=cosine, method.hclust=methodHC, nboot=as.numeric(bootstrap))  
-
     #parPvclust
     result_1=result$hclust
-    
-    
     AU_values=(round(result$edges,2))[,1]
     bootstrap_values=(round(result$edges,2))[,2]
   }
@@ -320,7 +311,6 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
     {
       for (j in 2:maxClust) 
       {
-        #print(summary(silhouette(cutree(result_1,k=j),dissimSS)))
         silAvgWidth_currentClustering=summary(silhouette(cutree(result_1,k=j),dissimSS))$avg.width
         silAvgWidth_allClustering<-c(silAvgWidth_allClustering,silAvgWidth_currentClustering)
       }
@@ -332,6 +322,7 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
   else
   {
     avgSilhouetteCoef=summary(silhouette(cutree(result_1,k=setnbcluster),dissimSS))$avg.width
+
     #Best number of clusters : bestNbClusters
     bestNbClusters=setnbcluster
   }
