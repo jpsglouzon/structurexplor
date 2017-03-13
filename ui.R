@@ -26,12 +26,10 @@ sidebar <- dashboardSidebar(
                                   "21"=21,"22"=22,"23"=23,"24"=24,"25"=25,"26"=26,"27"=27,"28"=28,"29"=29,"30"=30)
                    , selected = 0)
        ,
-       conditionalPanel(
-         condition = "input.distChoiceParam == 1",
          selectInput("setnmotifs", label = tags$h6("Top rep. regions"), 
                      choices = list("1" = 1,"2" = 2, "3" = 3, "4" = 4, "5" = 5)
                      , selected = 3)
-       )
+       
      )
     , 
    tags$head(
@@ -58,17 +56,14 @@ body <- dashboardBody(
   useShinyjs(),
   fluidRow(column(12,
   
-
     tabItems(
     tabItem(tabName = "about",
-
             div(id="mainPanelStructurXploR",style='background-color:white;'
                 ,br(),br(),
                 
             fluidRow(
               column(12,
               tags$h1(strong(HTML('Structurexpl<i class="fa fa-compass"></i>R')),align="center",style = "font-size:50pt;"),br(),
-              #p("StructureXpl",icon("gears","fa-stack-1x"),"R"),
               em(tags$h1("An interactive plateform to explore structural features of RNA secondary structures",align="center")),br(),
                tags$h2(strong("Get started with your secondary structures"),align="center")
               ),
@@ -104,7 +99,6 @@ body <- dashboardBody(
                              ),
                     br(),br()
                 )
-                
                 ,
                 tags$h2(strong("Explore cluster features"),align="center"),
                 br(),
@@ -135,7 +129,7 @@ body <- dashboardBody(
                   
                     HTML(' <a href="http://info.usherbrooke.ca/Prospectus" target="_blank">Prospectus</a> ')," & ",
                     HTML(' <a href="http://jpperreaultlab.recherche.usherbrooke.ca/" target="_blank">Perreault Lab.</a> '),br(),
-                    "GPL licence",br(),"2016"
+                    "GPL licence",br(),"2017"
                     )
           
       ),
@@ -176,13 +170,11 @@ body <- dashboardBody(
                         hr(),
                         fluidRow(column(6,
                                         strong(icon("pencil"),"Run examples"),": ",br(),
-                                        conditionalPanel("input.bootstrap==0", 
-                                        actionLink("ex_ss_linearRNA_pseudoknots", "179 struct. from 6 families: 5S, tRNA, RNAseP, SRP, tmRNA (pseudoknots) and Group II intron.",icon("arrow-circle-o-right")),br()
-                                        ),
+                                        actionLink("ex_ss_linearRNA_pseudoknots", "179 struct. from 6 families: 5S, tRNA, RNAseP, SRP, tmRNA (pseudoknots) and group-II-D1D4-1.",icon("arrow-circle-o-right")),br()
+                                        ,
                                         actionLink("ex_ss_circularRNA", "21 struct. from viroids (circ. RNA).",icon("arrow-circle-o-right")),br(),
-                                        conditionalPanel("input.bootstrap==0", 
                                         actionLink("ex_ss_linearRNA_g4", "88 struct. of 5S and struct. with G4.",icon("arrow-circle-o-right")),br()
-                                        ),
+                                        ,
                                         actionLink("exInfo", "Source of structures",icon("info-circle")),br(),
                                         
                                         bsModal("modalExInfo", strong("Source of structures"), "exInfo", size = "medium",
@@ -191,7 +183,7 @@ body <- dashboardBody(
                                                            ' : 5S (5S ribosomal RNA), transfer RNA (tRNA), RNAseP (Ribonuclease P RNA), Signal Recognition Particle RNA (SRP) and transfer messenger RNA (tmRNA).'
                                                   ),
                                                   tags$li( strong(HTML(' <a href="http://rfam.xfam.org/" target="_blank">RFAM database</a> ')),
-                                                           ' : Group II intron (group-II-D1D4-1).'
+                                                           ' : group-II-D1D4-1.'
                                                   ),
                                                   tags$li(strong(HTML(' <a href="http://scottgroup.med.usherbrooke.ca/G4RNA/" target="_blank">G4RNA database</a> ')),
                                                     ' : Structures with g-quadruplexes (G4).'
@@ -222,17 +214,7 @@ body <- dashboardBody(
                   box(width=6,title = tagList(shiny::icon("share-alt","fa-rotate-180"), "Structural comparison parameters"), solidHeader = TRUE, status = "warning",collapsible = TRUE,
                       collapsed=TRUE,
                       fluidRow(
-                        shinyjs::hidden(
-                          column(6,
-                                 radioButtons("distChoiceParam", label = "",
-                                              choices = list("Super-n-motifs model" = 1, "RNAdistance" = 2,
-                                                             "Base pair distance"=3), 
-                                              selected = 1)
-                          )
-                        ),
                         column(12,
-                               conditionalPanel(
-                                 condition = "input.distChoiceParam == 1",
                                  fluidRow(column(12,h5(strong("The super-n-motifs model")))),
                                           selectInput("snm", label = tags$h6("Nb. of super-n-motifs"), 
                                                       choices = list("Auto." =0 ,"2" = 2, "3" = 3, "4" = 5, "6" = 6, "7" = 7, "8" = 8,"9"=9,
@@ -255,10 +237,9 @@ body <- dashboardBody(
                                                      "The automatic determination of the number of Super-n-motifs (", em('Auto.') ,") is based on the broken stick model."), 
                                              tags$li(strong("The maximum level of n-motifs (Max. level of n-motifs)")," represents the maximum level of n-motifs computed. For instance, if it set to 1-motifs, motifs and 1-motifs will be take into account.") 
                                            ),
-                                          "Citation:..."
+                                          "Citation:", br(),
+                                         "Glouzon JS, Perreault JP, Wang S. The super-n-motifs model: a novel alignment-free approach for representing and comparing RNA secondary structures. Bioinformatics. 2017 Jan 14. pii: btw773. doi: 10.1093/bioinformatics/btw773"
                                  )
-                               )
-                              
                         )
                       )
                   ),
@@ -276,18 +257,7 @@ body <- dashboardBody(
                                            , selected = 10)
                         )
                       ),
-                      
-                      shinyjs::hidden(selectInput("bootstrap", label = tags$h6("Nb. of bootstrap rep." ), 
-                                  choices = list("0" = 0,"1000" = 1000), selected = 0))
-                      ,
-                      conditionalPanel(
-                        condition = "input.bootstrap == 1000",
-                        HTML('<p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i> Bootstrap computation may take some time.</p>')
-                        ),
-                      
-                      
                       actionLink("clusteringParam", "Clustering parameters",icon("info-circle")),
-                      
                       bsModal("modalclusteringParam", strong("Clustering parameters"), "clusteringParam", size = "medium",
                               tags$ul(
                                 tags$li(strong("Hierarchical clustering")," refers to the linkage function uses to compute the clustering. For further details on the silhouette coefficient, please see the function ", HTML(' <a href="https://stat.ethz.ch/R-manual/R-devel/library/stats/html/hclust.html" target="_blank">hclust</a>. ')
@@ -609,15 +579,6 @@ GAAAGGAAGGGGGAAAGGUUUGGAAAAGGGUUUGGGGUUGUUGGAAAAGGGGGGGGGGGGGGUUUUUUGG
                                                      HTML('The ','<a href="https://github.com/veg/phylotree.js" target="_blank"> phylotree.js</a>')," is the library used to visualize the hierarchy."
                                              )
                                              ,
-                                             conditionalPanel(condition="input.bootstrap>0",
-                                                              strong('Hierarchy with appromixately unbiased bootstrap values'),br(),br(),
-                                                              
-                                                              shinyjs::hidden(
-                                                              selectInput("AU_bootstrap_values", label = tags$h6("Show bootstrap values"), 
-                                                                          choices = list("Appromixately unbiased bootstrap values"=1)
-                                                                          , selected = 1))   
-                                                              
-                                                              ),
                                              #treewidgetOutput("dendSS",width='100%',height='100%')
                                              HTML('
                                                   <!-- Brand and toggle get grouped for better mobile display -->

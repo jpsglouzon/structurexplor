@@ -1,7 +1,5 @@
 
-
 shinyServer(function(input, output,session) {
-  
   
   options(shiny.maxRequestSize=30*1024^2)
   options(shiny.minified=TRUE)
@@ -13,8 +11,7 @@ shinyServer(function(input, output,session) {
   
   optimalNbCluster <- reactiveValues(data = NULL)
   data_res_updatesetnmotifs <- reactiveValues(data = NULL)
-  guidedTourActivated<- reactiveValues(data = FALSE)
-  
+
   parsedRNA<-reactiveValues(data = NULL)
   parsingIsSuccessful<-reactiveValues(data = FALSE)
   
@@ -28,7 +25,6 @@ shinyServer(function(input, output,session) {
     
     if (!parsingIsSuccessful$data) {
       shinyjs::disable("go")
-      
     } else { shinyjs::enable("go")}
     
     if (is.null(input$click$header1) || nchar(input$click$header1)==0) {
@@ -47,31 +43,11 @@ shinyServer(function(input, output,session) {
     
     if(input$focusStructViz==TRUE){
       shinyjs::hide("snmViz",anim=TRUE)
-      
-     
     } else { shinyjs::show("snmViz",anim=TRUE)}
     
     if(is.null(data_res$data)){
       shinyjs::disable("saveSession")
     }else {shinyjs::enable("saveSession")}
-    
-    
-  })
-  
-  observeEvent(input$bootstrap, {
-    
-    #nb struct maximum for bootstrap 
-
-    #if(!is.null(parsedRNA$data$headers))
-    #{
-    #if (length(parsedRNA$data$headers)>25 & input$bootstrap>0)
-    #{shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 25 structures is required. Please reduce the number of structures for bootstrap.</p>')
-    #  parsingIsSuccessful$data=F}
-    # else
-    #  { shinyjs::html("validateStruct", '<br><p style="color:green;font-weight:bold"><i class="fa fa-check"></i>Structures successfully parsed.</p>')
-    #    parsingIsSuccessful$data=T}
-   # }
-    
   })
 
   observeEvent(input$pathDbFile$datapath, {
@@ -95,7 +71,7 @@ shinyServer(function(input, output,session) {
     else if(length(grep("[0123456789]",parsedRNA$data$structures))>0)
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Numerical characters are not supported. Please check your structures.</p>')  
       parsingIsSuccessful$data=F}
-    #nb struct maximum
+    #issue with semi-colon
     else if (sum(grepl(';',parsedRNA$data$headers))>0)
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Semi-colon ";" is not supported. Please remove or replace semi-colons in structure header.</p>') 
       parsingIsSuccessful$data=F}
@@ -108,7 +84,6 @@ shinyServer(function(input, output,session) {
   observeEvent(input$go, {
    
     pathfile$data=input$pathDbFile$datapath
-    
     shinyjs::reset("hcExploreParam")
     
     setnbcluster_options <- list()
@@ -127,14 +102,13 @@ shinyServer(function(input, output,session) {
     shinyjs::reset("setnmotifs")
     data_res_updatesetnmotifs$data=NULL  
     
-    data_res$data=computeStructuralPatterns(pathfile$data,parsedRNA$data,input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
+    data_res$data=computeStructuralPatterns(pathfile$data,parsedRNA$data,input$snm,input$max_n_motifs,input$setnmotifs,input$maxClust,input$HC,input$setnbcluster)
     
     #si erreur repointer sur les données
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
     
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
-    
     
     #update snm parameter in feature visualization
     setsnm_x_options <- list()
@@ -164,7 +138,7 @@ shinyServer(function(input, output,session) {
     
     data_res_updatesetnmotifs$data=NULL  
     
-    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
+    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$snm,input$max_n_motifs,input$setnmotifs,input$maxClust,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
       
     updateTabItems(session, "menu","explore")
@@ -196,11 +170,9 @@ shinyServer(function(input, output,session) {
 
     shinyjs::reset("setnmotifs")
     data_res_updatesetnmotifs$data=NULL  
-    
   
-    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
+    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$snm,input$max_n_motifs,input$setnmotifs,input$maxClust,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
-    
     
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
@@ -214,20 +186,14 @@ shinyServer(function(input, output,session) {
     setsnm_y_options <- list()
     ncol(data_res$data[[2]]$SuperMotif)
     setsnm_y_options<-c(setsnm_y_options,as.list(1:ncol(as.data.frame(data_res$data[[2]]$SuperMotif))))
-    
-    
     updateSelectInput(session, "snm_y", choices = setsnm_y_options, selected = 2)
-    
-
-    
-  
   }) 
   
   observeEvent(input$ex_ss_linearRNA_g4, {
     
     pathfile$data="www/Data/secStruc_linear_RNA_g4.db"
     shinyjs::reset("hcExploreParam")
-    
+
     setnbcluster_options <- list()
     setnbcluster_options[["Opt. nb. clusters"]] <- 0
     setnbcluster_options<-c(setnbcluster_options,as.list(2:30))
@@ -235,7 +201,7 @@ shinyServer(function(input, output,session) {
     shinyjs::reset("setnmotifs")
     data_res_updatesetnmotifs$data=NULL  
     
-    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$distChoiceParam,input$snm,input$max_n_motifs,input$rnad,input$setnmotifs,input$maxClust,input$bootstrap,input$HC,input$setnbcluster)
+    data_res$data=computeStructuralPatterns(pathfile$data,parseDbFile(pathfile$data),input$snm,input$max_n_motifs,input$setnmotifs,input$maxClust,input$HC,input$setnbcluster)
     optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
     
     updateTabItems(session, "menu","explore")
@@ -277,11 +243,8 @@ shinyServer(function(input, output,session) {
       updateSelectInput(session, "setnbcluster", choices = setnbcluster_options, selected = 0)
     }
   
-   
     updateTabItems(session, "menu","explore")
     shinyjs::show("clustConfig")
-    
-
   })
   
   output$sessionDataLoaded<- reactive({
@@ -293,16 +256,12 @@ shinyServer(function(input, output,session) {
   
 
   output$saveSession <- downloadHandler(
-    
-    
     filename = function() {
       paste('sessionData-', Sys.Date(), '.R', sep='')
     },
     content = function(fileConn) {
       saveRDS(data_res$data, file = fileConn)
     }
-    
-    
   )
   
   ##############
@@ -315,7 +274,7 @@ shinyServer(function(input, output,session) {
       shinyjs::reset("setnmotifs")
       data_res_updatesetnmotifs$data=NULL  
       
-      data_res$data<-c(updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster))
+      data_res$data<-c(updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$setnmotifs,input$maxClust,input$hcExploreParam,input$setnbcluster))
       
     }
   })
@@ -326,7 +285,7 @@ shinyServer(function(input, output,session) {
     {
       #shinyjs::reset("setnmotifs")
         data_res_updatesetnmotifs$data=NULL  
-      data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
+      data_res$data=updateStructuralPatterns_with_setnbcluster(data_res$data[[1]],data_res$data[[2]],input$setnmotifs,input$maxClust,input$hcExploreParam,input$setnbcluster)
       
     }
     
@@ -337,10 +296,8 @@ shinyServer(function(input, output,session) {
       if(!is.null(data_res$data))
       {
         data_res_updatesetnmotifs$data=data_res$data  
-        data_res_updatesetnmotifs$data=updateStructuralPatterns_with_setnmotifs(data_res$data,data_res$data[[1]],data_res$data[[2]],input$distChoiceParam,input$setnmotifs,input$maxClust,input$bootstrap,input$hcExploreParam,input$setnbcluster)
-        data_res$data=data_res_updatesetnmotifs$data 
-        
-       
+        data_res_updatesetnmotifs$data=updateStructuralPatterns_with_setnmotifs(data_res$data,data_res$data[[1]],data_res$data[[2]],input$setnmotifs,input$maxClust,input$hcExploreParam,input$setnbcluster)
+        data_res$data=data_res_updatesetnmotifs$data
         }
   })
   
@@ -401,31 +358,29 @@ shinyServer(function(input, output,session) {
   output$nbStructures<- renderInfoBox({
     if (is.null(data_res$data)) return()
     
-    dataPatterns=data_res$data
-    infoBox(strong("Nb. of structures"),h3(strong(dim(dataPatterns[[1]])[1])),
+    infoBox(strong("Nb. of structures"),h3(strong(dim(data_res$data[[1]])[1])),
        icon = icon("th"),  color = "teal",fill=TRUE
     )
   })
   
   output$nbClustersBox <- renderInfoBox({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
+
   
     if (is.null(optimalNbCluster$data)){
-      optimalNbCluster$data=dataPatterns[[3]]$bestNbClusters
+      optimalNbCluster$data=data_res$data[[3]]$bestNbClusters
     }
     
-    if (optimalNbCluster$data==dataPatterns[[3]]$bestNbClusters)
+    if (optimalNbCluster$data==data_res$data[[3]]$bestNbClusters)
     {
-      infoBox(strong("Optimal nb. of clusters"),h3(strong(dataPatterns[[3]]$bestNbClusters)),
+      infoBox(strong("Optimal nb. of clusters"),h3(strong(data_res$data[[3]]$bestNbClusters)),
          icon = icon("th-large"),
         color = "aqua",fill=TRUE
       )
     }
     else
     {
-      infoBox(strong("Nb. of clusters"),h3(strong(dataPatterns[[3]]$bestNbClusters)),
+      infoBox(strong("Nb. of clusters"),h3(strong(data_res$data[[3]]$bestNbClusters)),
          icon = icon("th-large"),
         color = "aqua",fill=TRUE
       )     
@@ -434,19 +389,18 @@ shinyServer(function(input, output,session) {
   })
   
   output$cluterQualityBoxes<- renderUI({
-    dataPatterns=data_res$data
     if (is.null(data_res$data)) return()
     
-    plot_output_list<-lapply(1:dataPatterns[[3]]$bestNbClusters, function(i) {
+    plot_output_list<-lapply(1:data_res$data[[3]]$bestNbClusters, function(i) {
     output[[paste0('b', i)]] <- renderInfoBox({
 
-      if(dataPatterns[[3]]$clustSize[i]<=2)
+      if(data_res$data[[3]]$clustSize[i]<=2)
       {
         infoBox(strong(paste("Cluster",i)),'Not-app.',
               icon = icon("times"),
               color = 'black' ,fill=FALSE) 
       }
-      else if (dataPatterns[[3]]$listSilhouetteCoefPerClusters[i]>0.7)
+      else if (data_res$data[[3]]$listSilhouetteCoefPerClusters[i]>0.7)
       {
         infoBox(strong("Cluster ",i),'Very high',
                 icon = icon("arrow-up"),
@@ -484,12 +438,11 @@ shinyServer(function(input, output,session) {
   
   output$qualClusteringBox <- renderInfoBox({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
+
     globalClustsizeIsLessThan2=TRUE
-     for (i in 1:length(dataPatterns[[3]]$clustSize)) 
+     for (i in 1:length(data_res$data[[3]]$clustSize)) 
      {
-       if (dataPatterns[[3]]$clustSize[i]>2)
+       if (data_res$data[[3]]$clustSize[i]>2)
        {globalClustsizeIsLessThan2=FALSE}
      }
     
@@ -500,14 +453,14 @@ shinyServer(function(input, output,session) {
               color = "black"
       )
     }
-    else if (dataPatterns[[3]]$avgSilhouetteCoef>0.7)
+    else if (data_res$data[[3]]$avgSilhouetteCoef>0.7)
     {
       infoBox(strong("Global quality of clustering"),h3(strong("Very high")),fill=TRUE,
               icon = icon("arrow-up"),
               color = "olive"
       )
     }
-    else if(dataPatterns[[3]]$avgSilhouetteCoef>0.5)
+    else if(data_res$data[[3]]$avgSilhouetteCoef>0.5)
     {
     infoBox(strong("Global quality of clustering"),h3(strong("High")),fill=TRUE,
             icon = icon("arrow-up","fa-rotate-45"),
@@ -515,7 +468,7 @@ shinyServer(function(input, output,session) {
     )
     
     }
-    else if(dataPatterns[[3]]$avgSilhouetteCoef>0.3)
+    else if(data_res$data[[3]]$avgSilhouetteCoef>0.3)
     {
     infoBox(strong("Global quality of clustering"),h3(strong("Medium")),fill=TRUE,
             icon = icon("arrow-right"),
@@ -523,7 +476,7 @@ shinyServer(function(input, output,session) {
     )
     
     }
-    else if(dataPatterns[[3]]$avgSilhouetteCoef>0)
+    else if(data_res$data[[3]]$avgSilhouetteCoef>0)
     {
     infoBox(strong("Global quality of clustering"),h3(strong("Low")),fill=TRUE,
             icon = icon("arrow-right","fa-rotate-45"),
@@ -531,7 +484,7 @@ shinyServer(function(input, output,session) {
     )
     
     }
-    else if(dataPatterns[[3]]$avgSilhouetteCoef<=0)
+    else if(data_res$data[[3]]$avgSilhouetteCoef<=0)
     {
     infoBox(strong("Global quality of clustering"),h3(strong("Very low")),fill=TRUE,
             icon = icon("arrow-down"),
@@ -542,11 +495,10 @@ shinyServer(function(input, output,session) {
    
   output$hcontainer1 <- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    datatemp1=dataPatterns[[3]]$avgSilhouetteCoef
+
+    datatemp1=data_res$data[[3]]$avgSilhouetteCoef
     names(datatemp1)='Clustering'
-    datatemp2=dataPatterns[[3]]$listSilhouetteCoefPerClusters
+    datatemp2=data_res$data[[3]]$listSilhouetteCoefPerClusters
     names(datatemp2)=paste('Cluster', names(datatemp2))
     
     datatemp=signif(c(datatemp1,datatemp2),3)
@@ -557,7 +509,7 @@ shinyServer(function(input, output,session) {
     a$yAxis(title=list(text='Silhouette coef. (avg.)'),max=1)
     a$legend(enabled = FALSE)
     a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
-    a$colors(c('#C0C0C0',dataPatterns[[3]]$colorClusters))
+    a$colors(c('#C0C0C0',data_res$data[[3]]$colorClusters))
     
     a$data(data=as.vector(datatemp))
 
@@ -582,9 +534,8 @@ shinyServer(function(input, output,session) {
   
   output$barChartClustSizeProp <- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    datatemp=signif((dataPatterns[[3]]$clustSize/sum(dataPatterns[[3]]$clustSize))*100,3)
+
+    datatemp=signif((data_res$data[[3]]$clustSize/sum(data_res$data[[3]]$clustSize))*100,3)
     
     a <- rCharts:::Highcharts$new()
     a$chart(type = "column",shadow=FALSE)
@@ -593,7 +544,7 @@ shinyServer(function(input, output,session) {
     a$legend(enabled = FALSE)
     a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
-    a$colors(dataPatterns[[3]]$colorClusters)
+    a$colors(data_res$data[[3]]$colorClusters)
     a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
@@ -610,9 +561,8 @@ shinyServer(function(input, output,session) {
   
   output$barChartClustSize <- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    datatemp=signif(dataPatterns[[3]]$clustSize,3)
+
+    datatemp=signif(data_res$data[[3]]$clustSize,3)
     
     a <- rCharts:::Highcharts$new()
     a$chart(type = "column",shadow=FALSE)
@@ -621,7 +571,7 @@ shinyServer(function(input, output,session) {
     a$legend(enabled = FALSE)
     a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
-    a$colors(dataPatterns[[3]]$colorClusters)
+    a$colors(data_res$data[[3]]$colorClusters)
     a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
@@ -638,9 +588,8 @@ shinyServer(function(input, output,session) {
   
   output$barChartStructVar<- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    datatemp=signif(dataPatterns[[3]]$confStabilit,3)
+
+    datatemp=signif(data_res$data[[3]]$confStabilit,3)
     
     a <- rCharts:::Highcharts$new()
     a$chart(type = "column",shadow=FALSE)
@@ -649,7 +598,7 @@ shinyServer(function(input, output,session) {
     a$legend(enabled = FALSE)
     a$plotOptions(column=list(colorByPoint=TRUE,animation=FALSE))
     a$data(data=datatemp)
-    a$colors(dataPatterns[[3]]$colorClusters)
+    a$colors(data_res$data[[3]]$colorClusters)
     a$tooltip(followPointer=FALSE,shadow=FALSE,
       formatter = "#! function() {
               return '<table>'
@@ -665,14 +614,13 @@ shinyServer(function(input, output,session) {
   
   output$boxplotLengthDist<- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
+
     bwtLength=c()
     
-    for (i in 1:length(dataPatterns[[3]]$unikidxClustering)) 
+    for (i in 1:length(data_res$data[[3]]$unikidxClustering)) 
     {
-      clusCurrentInd=which(dataPatterns[[3]]$idxClustering %in% dataPatterns[[3]]$unikidxClustering[i])
-      LengthDistribCurrentClust=dataPatterns[[1]]$lengthRNAs[clusCurrentInd]
+      clusCurrentInd=which(data_res$data[[3]]$idxClustering %in% data_res$data[[3]]$unikidxClustering[i])
+      LengthDistribCurrentClust=data_res$data[[1]]$lengthRNAs[clusCurrentInd]
       temp_boxplotLength=boxplot(LengthDistribCurrentClust, plot = FALSE)
       bwtLength=cbind(bwtLength,temp_boxplotLength$stat)
     }
@@ -686,7 +634,7 @@ shinyServer(function(input, output,session) {
     a$yAxis(title=list(text='Number of nucleotides'))
     a$legend(enabled = FALSE)
     a$plotOptions(boxplot=list(colorByPoint=TRUE,animation=FALSE))
-    a$colors(dataPatterns[[3]]$colorClusters)
+    a$colors(data_res$data[[3]]$colorClusters)
     
     a$set(width="100%",heigth='100%')
     
@@ -699,16 +647,14 @@ shinyServer(function(input, output,session) {
   
   output$clustInfo = DT::renderDataTable({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    dataPatterns[[8]]
+
+    data_res$data[[8]]
     })
   
   #Patterns tab  
   output$tbl = DT::renderDataTable({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    dataPatterns[[9]]
+    data_res$data[[9]]
   })
     
   #Tab of structures
@@ -732,16 +678,14 @@ shinyServer(function(input, output,session) {
   output$scatplotsnm <- renderChart2({
     if (is.null(data_res$data)) return()
     
-    dataPatterns=data_res$data
-    
-    if (is.null(dataPatterns)) 
-    {return(dataPatterns[[5]])}
+    if (is.null(data_res$data)) 
+    {return(data_res$data[[5]])}
     else{
     
       
       snm_x=as.numeric(input$snm_x)
       snm_y=as.numeric(input$snm_y)
-      scatPlotSNM(dataPatterns[[2]]$SuperMotif[,snm_x],dataPatterns[[2]]$SuperMotif[,snm_y],dataPatterns[[3]]$bestNmotifsForClusters_coord[,snm_x],dataPatterns[[3]]$bestNmotifsForClusters_coord[,snm_y],snm_x,snm_y,dataPatterns[[3]]$bestNmotifsForClusters_pos,dataPatterns[[3]]$bestNmotifsForClusters_pos_namesNmotifs,dataPatterns[[2]]$singularValuesPercent,dataPatterns[[1]]$headers,dataPatterns[[3]]$idxClustering,dataPatterns[[3]]$colorClusters,dataPatterns[[3]]$repClustList,dataPatterns[[3]]$outliers,dataPatterns[[3]]$matnmPosBestnmotifsforForna,dataPatterns[[1]])
+      scatPlotSNM(data_res$data[[2]]$SuperMotif[,snm_x],data_res$data[[2]]$SuperMotif[,snm_y],data_res$data[[3]]$bestNmotifsForClusters_coord[,snm_x],data_res$data[[3]]$bestNmotifsForClusters_coord[,snm_y],snm_x,snm_y,data_res$data[[3]]$bestNmotifsForClusters_pos,data_res$data[[3]]$bestNmotifsForClusters_pos_namesNmotifs,data_res$data[[2]]$singularValuesPercent,data_res$data[[1]]$headers,data_res$data[[3]]$idxClustering,data_res$data[[3]]$colorClusters,data_res$data[[3]]$repClustList,data_res$data[[3]]$outliers,data_res$data[[3]]$matnmPosBestnmotifsforForna,data_res$data[[1]])
     
       
       
@@ -780,9 +724,8 @@ shinyServer(function(input, output,session) {
   #VarExplained
   output$varExp <- renderChart2({
     if (is.null(data_res$data)) return()
-    dataPatterns=data_res$data
-    
-    dataPatterns[[6]]
+
+    data_res$data[[6]]
     })
   
   
@@ -800,7 +743,6 @@ shinyServer(function(input, output,session) {
     if (is.null(data_res$data)) return()
     if (is.null(input$click$header1)) return(a)
     
-    dataPatterns=data_res$data
     if (input$click$header1=="") 
     {return(a    )}
     else{
@@ -834,7 +776,7 @@ shinyServer(function(input, output,session) {
           else
           {
             indTempHeader1=which(data_res$data[[1]]$headers %in% input$click$header1)#dissimilarity matrix based on cosine similarity -->test with output of snm (faster)
-            nmotifsRegion1=dataPatterns[[3]]$matnmPosBestnmotifsforForna[indTempHeader1]
+            nmotifsRegion1=data_res$data[[3]]$matnmPosBestnmotifsforForna[indTempHeader1]
           }
         }
         else{nmotifsRegion1=""}
@@ -872,12 +814,10 @@ shinyServer(function(input, output,session) {
   
   output$rna_ss2 <- renderUI({
     if (is.null(data_res$data)) return()
-    if (is.null(data_res$data)) return()
     if (is.null(input$click$header2)) return()
-    dataPatterns=data_res$data
-    
-    if (is.null(dataPatterns)&&is.null(input$click$header2)&&(input$click$header2=="")) 
-    {return(dataPatterns[[5]])}
+
+    if (is.null(data_res$data)&&is.null(input$click$header2)&&(input$click$header2=="")) 
+    {return(data_res$data[[5]])}
     else{
       struct2=input$click$structure2
       #Gquadruplexes color
@@ -906,7 +846,7 @@ shinyServer(function(input, output,session) {
         else
         {
           indTempHeader2=which(data_res$data[[1]]$headers %in% input$click$header2)#dissimilarity matrix based on cosine similarity -->test with output of snm (faster)
-          nmotifsRegion2=dataPatterns[[3]]$matnmPosBestnmotifsforForna[indTempHeader2]
+          nmotifsRegion2=data_res$data[[3]]$matnmPosBestnmotifsforForna[indTempHeader2]
         }
         
       }
@@ -938,8 +878,6 @@ shinyServer(function(input, output,session) {
     return(a)
   })
     
-
-  
   observeEvent(input$buttonPrepare1, {
     shinydashboard::updateTabItems(session, "menu","prepare")
   })
@@ -949,20 +887,14 @@ shinyServer(function(input, output,session) {
   observeEvent(input$buttonPrepare2, {
     shinydashboard::updateTabItems(session, "menu","prepare")
  })
-  
-  onclick("toggleAdvancedrnad", toggle(id = "advancedrnad", anim = TRUE))
-  onclick("toggleAdvancedrnabpd", toggle(id = "advancedrnabpd", anim = TRUE))
-  
 
   output$exportDB <- downloadHandler(
       filename = function() {
         paste('secStruct-', Sys.Date(), '.db', sep='')
       },
       content = function(fileConn) {
-        
-       
+  
             cat("", file=fileConn, append=FALSE, sep='')
-
             for (i in 1:length(input$tbOfStruct_rows_all)) 
             {
               temp=input$tbOfStruct_rows_all[i]
@@ -978,41 +910,34 @@ shinyServer(function(input, output,session) {
       }
     )
   
+  ###### export Struct1 in db #######
   output$exportdbStruct1 <- downloadHandler(
     filename = function() {
       paste(input$click$header1,'-', Sys.Date(), '.db', sep='')
     },
     content = function(fileConn) {
-      cat("", file=fileConn, append=FALSE, sep='')
-      
+        cat("", file=fileConn, append=FALSE, sep='')
         cat(">",as.character(input$click$header1), "\n", file=fileConn, append=TRUE, sep='')
-        
         cat(as.character(input$click$sequence1), "\n", file=fileConn, append=TRUE, sep='')
         cat(as.character(input$click$structure1), "\n", file=fileConn, append=TRUE, sep='')
-        
-      
     }
   )
   
+  ###### export Struct2 in db #######
   output$exportdbStruct2 <- downloadHandler(
     filename = function() {
       paste(input$click$header2,'-', Sys.Date(),'.db', sep='')
     },
     content = function(fileConn) {
       cat("", file=fileConn, append=FALSE, sep='')
-      
       cat(">",as.character(input$click$header2), "\n", file=fileConn, append=TRUE, sep='')
-      
       cat(as.character(input$click$sequence2), "\n", file=fileConn, append=TRUE, sep='')
       cat(as.character(input$click$structure2), "\n", file=fileConn, append=TRUE, sep='')
-      
-      
     }
   )
   
-  #Dendrogram###################################
+  ###### Dendrogram###################################
   output$legendHierarchy <- renderUI({
-  
     legend=''
     for (j in 1:data_res$data[[3]]$bestNbClusters) 
     {
@@ -1023,21 +948,9 @@ shinyServer(function(input, output,session) {
   
   
   output$dendSS2 <- renderUI({
-    
     data_res$data
     
-    if(input$bootstrap>0)
-    {
-      if(input$AU_bootstrap_values==1)
-      {values=data_res$data[[3]]$AU_values}
-      else{values=data_res$data[[3]]$bootstrap_values}
-      inputTree=write.tree(as.phylo.hclust.with.nodenames(data_res$data[[3]]$resultClust, nodenames=values)
-                           ,tree.names=TRUE,digits=2)
-    }else
-    {
     inputTree = write.tree( as.phylo(data_res$data[[3]]$resultClust))
-    
-    }
     
     inputClust=rjson::toJSON( data_res$data[[3]]$idxClustering)
     
@@ -1046,12 +959,6 @@ shinyServer(function(input, output,session) {
     
     atemp=paste('
 // the global tree variable
-
-                //var inputClust= {"PSTVd": 1, "TASVd": 1, "TCDVd": 1, "CSVd": 1, "CLVd": 1, "CCCVd": 1, "ASSVd": 1, "PBCVd": 1, "CVd-OS": 1, "CbVd-1": 1, "CbVd-2": 1, "CbVd-3": 1, "CCHMVd": 2, "ELVd": 2, "ASBVd": 2, "HSVd": 1, "CVdIV": 1, "CVDIII": 1, "CBLVd": 1, "CEVd": 1, "PLMVd": 2};
-
-                //var inputTree="(((((((TASVd:0.06828169,CSVd:0.06828169)0.8170:0.05635267,CEVd:0.12463435)0.8290:0.06964112,(PSTVd:0.02617095,TCDVd:0.02617095)1.0000:0.16810452)0.6700:0.08751399,CLVd:0.28178947)0.8700:0.13005822,(HSVd:0.26704011,(CCCVd:0.20577326,CVdIV:0.20577326)0.6520:0.06126685)0.8790:0.14480757)0.8810:0.18306776,(((CbVd-2:0.08236826,CbVd-3:0.08236826)0.9300:0.10543001,CbVd-1:0.18779827)0.9970:0.29222981,(PBCVd:0.38569588,(CBLVd:0.30671661,(ASSVd:0.25961362,(CVd-OS:0.14517605,CVDIII:0.14517605)0.9870:0.11443757)0.5950:0.04710299)0.5660:0.07897927)0.7300:0.09433220)0.6860:0.11488736)0.9840:0.46199326,((CCHMVd:0.37098428,PLMVd:0.37098428)0.8850:0.20471288,(ELVd:0.37028264,ASBVd:0.37028264)0.8730:0.20541453)0.9840:0.48121154);";
-                
-                //var inputTree="(((((((TASVd:0.06828169,CSVd:0.06828169)0.8170:0.05635267,CEVd:0.12463435)0.8290:0.06964112,(PSTVd:0.02617095,TCDVd:0.02617095)1.0000:0.16810452)0.6700:0.08751399,CLVd:0.28178947)0.8700:0.13005822,(HSVd:0.26704011,(CCCVd:0.20577326,CVdIV:0.20577326)0.6520:0.06126685)0.8790:0.14480757)0.8810:0.18306776,(((CbVd-2:0.08236826,CbVd-3:0.08236826)0.9300:0.10543001,CbVd-1:0.18779827)0.9970:0.29222981,(PBCVd:0.38569588,(CBLVd:0.30671661,(ASSVd:0.25961362,(CVd-OS:0.14517605,CVDIII:0.14517605)0.9870:0.11443757)0.5950:0.04710299)0.5660:0.07897927)0.7300:0.09433220)0.6860:0.11488736)0.9840:0.46199326,((CCHMVd:0.37098428,PLMVd:0.37098428)0.8850:0.20471288,(ELVd:0.37028264,ASBVd:0.37028264)0.8730:0.20541453)0.9840:0.48121154);";
 
                 var inputClust=',inputClust,'; 
 
@@ -1527,9 +1434,6 @@ function selection_handler_name_box (e) {
     }}
 
     //************************DRAW TREE AND CLUSTER ANNOTATION**************************
-
-
-
       drawATree(inputTree);
       applyAnnotation(inputClust);
 
@@ -1559,8 +1463,6 @@ function selection_handler_name_box (e) {
     return(a)
     
   })
-  
-  
   
 })
 

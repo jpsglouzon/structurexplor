@@ -5,7 +5,7 @@ gg_color_hue <- function(n) {
 }
 
 #####################################################
-computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max_n_motifs,rnad,setnmotifs,maxClust,bootstrap,HC,setnbcluster)
+computeStructuralPatterns<-function(pathfile,resParseRNA,snm,max_n_motifs,setnmotifs,maxClust,HC,setnbcluster)
 {
   patterns=NULL
   withProgress(message = 'Compute structural features', value = 0, { 
@@ -13,31 +13,8 @@ computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max
     #incProgress(1/allstep, message = "Parse .db file...")   
     #resParseRNA <- parseDbFile(pathfile)
     incProgress(2/allstep, message = "Run the super-n-motifs model...")
-    if (distChoiceParam==1)#SNM
-    {
-          resComp <- runSNM (pathfile,snm,max_n_motifs) 
-          if (bootstrap>0)
-          {
-            if (dim(resComp$SuperMotif)[2]<5)
-            {
-              resComp=c()
-              minSnmForBootstrap=5
-              snm=minSnmForBootstrap
-              resComp <- runSNM (pathfile,snm,max_n_motifs)               
-            }
-            incProgress(3/allstep, message = "Run the clustering (bootstrap): please wait...")
-          }
-          else{
-            incProgress(3/allstep, message = "Run the clustering...")
-          }
-    } else if(distChoiceParam==2)#RNadistance
-    {
-          resComp <- runRNAd (pathfile,rnad) 
-    }else # Base pair distance
-    {   
-         resComp <- runRNAd (pathfile,'P') 
-    }
-    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,bootstrap,HC,setnbcluster,distChoiceParam,rnad) 
+    resComp <- runSNM (pathfile,snm,max_n_motifs) 
+    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,HC,setnbcluster) 
     incProgress(4/allstep, message = "Generate datatable of structures...")
     #datass<-c()
     datass<-dataTableSS(resParseRNA$headers,resClus$idxClustering,resClus$repClustList,resParseRNA$sequences,resParseRNA$structures,resParseRNA$lengthRNAs,resClus$outliers)
@@ -59,17 +36,13 @@ computeStructuralPatterns<-function(pathfile,resParseRNA,distChoiceParam,snm,max
 }
 
 #####################################################
-updateStructuralPatterns_with_setnbcluster<-function(resParseRNA,resComp,distChoiceParam,setnmotifs,maxClust,bootstrap,HC,setnbcluster)
+updateStructuralPatterns_with_setnbcluster<-function(resParseRNA,resComp,setnmotifs,maxClust,HC,setnbcluster)
 {
   patterns=NULL
   withProgress(message = 'Update structural patterns', value = 0, { 
     allstep=7
-    if (bootstrap>0)
-    {incProgress(1/allstep, message = "Run the clustering (bootstrap): please wait...")}
-    else{
-      incProgress(1/allstep, message = "Run the clustering...")
-    }    
-    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,bootstrap,HC,setnbcluster,distChoiceParam,rnad) 
+    incProgress(1/allstep, message = "Run the clustering...")
+    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,HC,setnbcluster) 
     incProgress(2/allstep, message = "Generate datatable of structures...")
     datass<-dataTableSS(resParseRNA$headers,resClus$idxClustering,resClus$repClustList,resParseRNA$sequences,resParseRNA$structures,resParseRNA$lengthRNAs,resClus$outliers)
     incProgress(3/allstep, message = "Generate datatable of Patterns...")
@@ -90,18 +63,14 @@ updateStructuralPatterns_with_setnbcluster<-function(resParseRNA,resComp,distCho
 }
 
 #####################################################
-updateStructuralPatterns_with_setnmotifs<-function(patterns,resParseRNA,resComp,distChoiceParam,setnmotifs,maxClust,bootstrap,HC,setnbcluster)
+updateStructuralPatterns_with_setnmotifs<-function(patterns,resParseRNA,resComp,setnmotifs,maxClust,HC,setnbcluster)
 {
   withProgress(message = 'Update structural patterns', value = 0, { 
     allstep=7
-    if (bootstrap>0)
-    {incProgress(1/allstep, message = "Run the clustering (bootstrap) : please wait...")}
-    else{
-      incProgress(1/allstep, message = "Run the clustering...")
-    }    
-    
-    
-    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,bootstrap,HC,setnbcluster,distChoiceParam,rnad) 
+
+    incProgress(1/allstep, message = "Run the clustering...")
+ 
+    resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,HC,setnbcluster) 
     incProgress(2/allstep, message = "Generate datatable of structures...")
     datass<-dataTableSS(resParseRNA$headers,resClus$idxClustering,resClus$repClustList,resParseRNA$sequences,resParseRNA$structures,resParseRNA$lengthRNAs,resClus$outliers)
     incProgress(3/allstep, message = "Generate datatable of Patterns...")
@@ -117,14 +86,10 @@ updateStructuralPatterns_with_setnmotifs<-function(patterns,resParseRNA,resComp,
 parseDbFile <- function (pathSSdnb) {
   
   fastaDataraw<-readBStringSet(pathSSdnb,"fasta")
-  
   header=names(fastaDataraw)
-
   seqNstruct<-lapply(fastaDataraw, splitRNA2SeqNStruct)
-  
   resultsParseRNA=c()
   resultsParseRNA$headers=header
-  
   resultsParseRNA$sequences=unlist(lapply(seqNstruct, `[[`, 1))
   resultsParseRNA$structures=unlist(lapply(seqNstruct, `[[`, 2))
   resultsParseRNA$lengthRNAs=unlist(lapply(seqNstruct, `[[`, 3))
@@ -148,19 +113,12 @@ splitRNA2SeqNStruct<-function (x, ...){
 ######################## 1.run supermotifs model #########################
 runSNM <- function (pathSSdnb,nbSnm,maxNm) {
 
-  
   platform=Sys.info()[['sysname']]
   if(platform == "Linux") {
     pathSNM="www/Functions/supernmotifs_ubuntu64_V1.3"
     a=system2("chmod", args=c("755",pathSNM))
-  } else if (platform== "Windows"){
-    pathSNM="www/Functions/supernmotifs_v1_2_win64.exe"
-    a=system2("icacls", args=c(pathSNM, "/grant", 'Everyone:F'))
-  } else if (platform== "Darwin"){
-    pathSNM="www/Functions/supernmotifs_v1_2_osx64"
-    a=system2("chmod", args=c("755",pathSNM))
   } else{
-    print ("Unrecognized operating system.")
+    print ("Unrecognized operating system. Structurexplor is supported by Ubuntu 64.")
     stopApp()
   }
 
@@ -174,15 +132,13 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
   
   #dissim matrix
   pathdissimSS<-paste(outputPath,"matDissim_SSbySS.csv",sep="")
-  
    dissimSS <- data.matrix(read.table(pathdissimSS, fill=T, sep = ",",  col.names=1:nrow(SuperMotif))) 
    dissimSS[is.na(dissimSS)]=0     
    dissimSS=rbind(rep(0,nrow(SuperMotif)),dissimSS)     
    dissimSS[upper.tri(dissimSS)] <- t(dissimSS)[upper.tri(dissimSS)]
    colnames(dissimSS)=row.names(SuperMotif)
    rownames(dissimSS)=row.names(SuperMotif)
-  #dissimSS<-c()
-  
+
   #read singular values
   pathSingularValues<-paste(outputPath,"singularValuesFull_supernmotifs.csv",sep="")
   singularValues <- read.csv(pathSingularValues,header = TRUE,sep = ",",comment.char = "")
@@ -219,55 +175,9 @@ runSNM <- function (pathSSdnb,nbSnm,maxNm) {
   return(results)
 }
 
-######################## run RNAdistance #########################
-runRNAd <- function (pathSSdnb,rnad) {
-  
-  pathRNAd="www/Functions/RNAdistance"
-  
-  nbOfSingularValuesMDS=3
-  
-  print(rnad)
-  #rnad='P'
-  #pathRNAd="/home/sehi/Documents/Workspace/Rstudio/structureXploR/structureXploR/www/Functions/RNAdistance"
-  #pathSSdnb="/home/sehi/Documents/Workspace/Rstudio/Analyse_Phylogenie_Viroid/Analyse_ensembleStructure/parsed_bracket/parsed_CbVd-1.bracket"
-
-  commandRNAd=paste(pathRNAd,paste("<",pathSSdnb,sep=""),paste("-D",rnad,sep=""),"-Xm")
-  outRNAdistanceRaw=system(commandRNAd,intern=TRUE)
-  outRNAdistance=outRNAdistanceRaw[((length(outRNAdistanceRaw)%/%2)+2):(length(outRNAdistanceRaw)-1)]
-  
-  #dissimSS=do.call(rbind, lapply(strsplit(outRNAdistance," "), as.numeric))
- #dissimSS[upper.tri(dissimSS)] <- 0
-  #dissimSS=rbind(rep(0,dim(dissimSS)[1]),dissimSS)
-  #dissimSS=cbind(dissimSS,rep(0,dim(dissimSS)[1]))
-  dissimSS=t(dissimSS)+dissimSS
-  
-  mds=cmdscale(dissimSS, k = nbOfSingularValuesMDS, eig = TRUE)
-  #mds=isoMDS(dissimSS, k = nbOfSingularValuesMDS)
-  
-  SuperMotif=mds$points
-
-  eigenValues=mds$eig[mds$eig>=0]
-  singularValuesPercent=(eigenValues/sum(eigenValues))*100  
-  singularValuesPercent= cbind(c(singularValuesPercent))
-  
-  #print(mds$eig)
-  #print(sum(mds$eig))
-  #print(singularValuesPercent)
-  
-  results=c()
-  results$SuperMotif=SuperMotif
-  results$dissimSS=dissimSS
-  results$singularValuesPercent=singularValuesPercent
-  results$matDissim_SSbynm=c()
-  results$SuperMotifnmotifs=c()
-  results$matnmPos=c()
-  
-  return(results)
-}
-
 ###################### 2. Clustering of secondary structures #########################
 
-runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmotifs,matnmPos,setnmotifs,maxClust,bootstrap,methodHC,setnbcluster,distChoiceParam,rnad){
+runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmotifs,matnmPos,setnmotifs,maxClust,methodHC,setnbcluster){
   
   if (methodHC==0) {methodHC="average"}
   if (methodHC==1) {methodHC="ward"}
@@ -276,36 +186,19 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
   
   maxClust=as.numeric(maxClust)
   
-  if (distChoiceParam==1)
-  {
     SuperMotifRaw=t(SuperMotifRaw)
     SuperMotif=SuperMotifRaw
     
-    #dissimSS=as.matrix(cosine(SuperMotif))
     if (maxClust>dim(SuperMotif)[2])
     {
       print("Maximum number of clusters (maxClust) is greater than the nb. of SS. maxClust is set so that maxClust = n.b of SS. -1")
       maxClust=dim(SuperMotif)[2]-1
     }
-    
-  }
-  
-  ####### Hierarchical clustering using pvclust
-  if (bootstrap>0 && distChoiceParam==1)
-  {
-    result = pvclust(SuperMotif, method.dist=cosine, method.hclust=methodHC, nboot=as.numeric(bootstrap))  
-    #parPvclust
-    result_1=result$hclust
-    AU_values=(round(result$edges,2))[,1]
-    bootstrap_values=(round(result$edges,2))[,2]
-  }
-  else
-  {
-    result_1=hclust(as.dist(dissimSS), method=methodHC)
-  }
   
   ####### Determination of the number of clusters using silhouette coefficient #########
 
+  result_1=hclust(as.dist(dissimSS), method=methodHC)
+    
   silAvgWidth_allClustering=c()
   if(setnbcluster==0)
     {
@@ -410,15 +303,12 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
     }
     repClustList<-cbind(repClustList,currentRep)
     
-    if (distChoiceParam==1)
-    {
     #Select n-motif representatives of clusters: n-motifs closest  to the representatives
     matDissim_SSbynm_clusterCurrent=matDissim_SSbynm[idxClustering==idxClustering[indRep],]
    
     
     matDissim_SSbynm_MeansnmotifsBycluster=colMeans(matDissim_SSbynm_clusterCurrent)
     bestNmotifsForClusters_ordered=order(matDissim_SSbynm_MeansnmotifsBycluster)
-   
     
     #print(setnmotifs)
       for (j in 1:setnmotifs) 
@@ -445,8 +335,6 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
         matnmPosBestnmotifsforForna=paste(matnmPosBestnmotifsforFornaTemp,matnmPosBestnmotifsforForna,sep="")
       }
     
-    }
-    
   }
   
   resultsClustering=c()
@@ -458,12 +346,6 @@ runClustering <- function (SuperMotifRaw,dissimSS,matDissim_SSbynm,SuperMotifnmo
   resultsClustering$bestNbClusters=bestNbClusters
 
   resultsClustering$resultClust=result_1
-  if (bootstrap>0 && distChoiceParam==1  )
-    {
-    resultsClustering$AU_values=AU_values
-    resultsClustering$bootstrap_values=bootstrap_values
-    }
-  
   resultsClustering$colorClusters=colorClusters
   #
   resultsClustering$avgSilhouetteCoef=avgSilhouetteCoef
@@ -527,13 +409,9 @@ dataTableSS<-function(headers,idxClustering,repClustList,sequences,structures,le
   lengthRNAsString=toString(lengthRNAs)
   
   datass=cbind.data.frame(headers,idxClustering,repList,as.character(lengthRNAs),outliersList,sequences,structures)
-
-
-  
   colnames(datass)<-c("Header","Cluster","Representatives","Length ","Unusual structures","Sequences","Structures")
   
-  datassDatatable=datass
-  return(datassDatatable) 
+  return(datass) 
 }
 
 #################################### . dataTable of patterns ######################################## 
@@ -730,11 +608,7 @@ variability<-function(singularValuesPercent,Supermotifs) {
   
   
   b$legend(enabled = TRUE)
-  
-  #use with svg text in custom.css
-  #a$exporting(fallbackToExportServer=F, allowHTML=T,buttons = list(contextButton=list(text="\uf019 Export",symbol="",
-  #                                                                                    verticalAlign="bottom", y=5 , align="right",symbolSize= 15)))
-  
+
   b$xAxis(
 
           title = list(style=list(color='#000000'),text = "Super-n-motifs "),
@@ -775,56 +649,4 @@ variability<-function(singularValuesPercent,Supermotifs) {
 
   return(b)
 }
-
-
-#############################################  
-## Define a distance function which returns an object of class "dist".
-## The function must have only one argument "x" (data matrix or data.frame).
-cosine <- function(x) {
-  x <- as.matrix(x)
-  y <- t(x) %*% x
-  res <- 1 - y / (sqrt(diag(y)) %*% t(sqrt(diag(y))))
-  res <- as.dist(res)
-  attr(res, "method") <- "cosine"
-  return(res)
-}
-
-
-
-####################################################
-as.phylo.hclust.with.nodenames <- function (x, nodenames, ...) #We add a nodenames argument
-{
-  N <- dim(x$merge)[1]
-  edge <- matrix(0L, 2 * N, 2)
-  edge.length <- numeric(2 * N)
-  node <- integer(N)
-  node[N] <- N + 2L
-  cur.nod <- N + 3L
-  j <- 1L
-  for (i in N:1) {
-    edge[j:(j + 1), 1] <- node[i]
-    for (l in 1:2) {
-      k <- j + l - 1L
-      y <- x$merge[i, l]
-      if (y > 0) {
-        edge[k, 2] <- node[y] <- cur.nod
-        cur.nod <- cur.nod + 1L
-        edge.length[k] <- x$height[i] - x$height[y]
-      }
-      else {
-        edge[k, 2] <- -y
-        edge.length[k] <- x$height[i]
-      }
-    }
-    j <- j + 2L
-  }
-  if (is.null(x$labels)) 
-    x$labels <- as.character(1:(N + 1))
-  node.lab <- nodenames[order(node)] #Here we define our node labels
-  obj <- list(edge = edge, edge.length = edge.length/2, tip.label = x$labels, 
-              Nnode = N, node.label = node.lab) #And you put them in the final object
-  class(obj) <- "phylo"
-  reorder(obj)
-}
-
 
