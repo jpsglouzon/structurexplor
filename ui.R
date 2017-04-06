@@ -149,12 +149,12 @@ body <- dashboardBody(
                         hr(),
                         fluidRow(column(12,
                                         div(style="height: 60px;",
-                                          fileInput("pathDbFile", label = tags$h5(icon("reply-all","fa-rotate-180"),strong("Enter your RNA secondary structures in "), HTML(' <a href="http://ultrastudio.org/en/Dot-Bracket_Notation" target="_blank">dot-bracket</a> '), '.'),
+                                          fileInput("pathDbFile", label = tags$h5(icon("reply-all","fa-rotate-180"),strong("Enter your RNA secondary structures in "), HTML(' <a href="http://ultrastudio.org/en/Dot-Bracket_Notation" target="_blank">dot-bracket </a> '), ' (.b, .db or .dot).'),
                                                     accept = c(
                                                       'text/plain',
+                                                      '.b',
                                                       '.db',
-                                                      '.dot',
-                                                      '.fasta'
+                                                      '.dot'
                                                       )
                                                     )
                                         ),
