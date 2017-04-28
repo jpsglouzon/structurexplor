@@ -63,6 +63,10 @@ shinyServer(function(input, output,session) {
     else if (length(parsedRNA$data$headers)>1000)
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Less than 1000 structures are required. Please reduce the number of structures.</p>') 
       parsingIsSuccessful$data=F}
+    #Match bracket of structures
+    else if (sum(parsedRNA$data$matchparenthesis)!=length(parsedRNA$data$matchparenthesis))
+    {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Structures are not properly formatted. Please check if the strutures are in dot-bracket format and if the brackets match.</p>') 
+      parsingIsSuccessful$data=F}      
     #structure with id identique
     else if(length(parsedRNA$data$headers)!=length(unique(parsedRNA$data$headers)))
     {shinyjs::html("validateStruct", '<br><p style="color:orange;font-weight:bold"><i class="fa fa-warning"></i>Headers of structures must be unique. Please check the headers of your structures.</p>') 

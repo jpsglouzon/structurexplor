@@ -1,4 +1,4 @@
-packList=c('shiny','rmarkdown','devtools','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS','rCharts','BiocGenerics','Biostrings')
+packList=c('shiny','rmarkdown','devtools','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS','rCharts','BiocGenerics','Biostrings','stringr')
 lapply(packList, require, character.only = TRUE)
 
 source("www/Functions/mainFunctions.R")

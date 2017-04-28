@@ -88,6 +88,7 @@ parseDbFile <- function (pathSSdnb) {
   fastaDataraw<-readBStringSet(pathSSdnb,"fasta")
   header=names(fastaDataraw)
   seqNstruct<-lapply(fastaDataraw, splitRNA2SeqNStruct)
+  
   resultsParseRNA=c()
   resultsParseRNA$headers=header
   resultsParseRNA$sequences=unlist(lapply(seqNstruct, `[[`, 1))
@@ -95,6 +96,12 @@ parseDbFile <- function (pathSSdnb) {
   resultsParseRNA$lengthRNAs=unlist(lapply(seqNstruct, `[[`, 3))
   
   resultsParseRNA=as.data.frame(resultsParseRNA)
+  
+  countMatchParenthesis=str_count(resultsParseRNA$structures,'\\(')-str_count(resultsParseRNA$structures,'\\)')
+  matchparenthesis=countMatchParenthesis
+  matchparenthesis=countMatchParenthesis==0
+
+  resultsParseRNA$matchparenthesis=matchparenthesis
   
   return(resultsParseRNA)
 }
