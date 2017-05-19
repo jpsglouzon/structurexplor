@@ -19,9 +19,19 @@ for Ubuntu 16.04 also called Ubuntu Xenial Xerus.
 3. Start R command line by opening the terminal and by typing 'R'.
 
 4. At the R prompt, install and load the following packages using the following commands 
-`packList=c('shiny','rmarkdown','devtools','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS','rCharts','BiocGenerics','Biostrings');`
+`install.packages("devtools")`
+`require(devtools)`
+`install_github("ramnathv/rCharts")`
+`require(rCharts)`
+`source("https://bioconductor.org/biocLite.R")`
+`biocLite(c("BiocGenerics", "Biostrings"))`
+`require(BiocGenerics)`
+`require(Biostrings)`
+`packList=c('shiny','rmarkdown','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS');`
 `lapply(packList, install.packages, character.only = TRUE);`
 `lapply(packList, require, character.only = TRUE)`
+Note that devtools required 'libcurl4-openssl-dev' to be installed via ubuntu terminal by the following command:
+`sudo apt-get install libcurl4-openssl-dev`
 
 ### Supplementary step to run Structurexplor on a local machine ###
 * Start Structurexplor using
