@@ -19,14 +19,14 @@ for Ubuntu 16.04 also called Ubuntu Xenial Xerus.
 3. Start R command line by opening the terminal and by typing 'R'.
 
 4. At the R prompt, install and load the following packages using the following commands 
-`install.packages("devtools")`
-`require(devtools)`
-`install_github("ramnathv/rCharts")`
-`require(rCharts)`
-`source("https://bioconductor.org/biocLite.R")`
-`biocLite(c("BiocGenerics", "Biostrings"))`
-`require(BiocGenerics)`
-`require(Biostrings)`
+`install.packages("devtools");`
+`require(devtools);`
+`install_github("ramnathv/rCharts");`
+`require(rCharts);`
+`source("https://bioconductor.org/biocLite.R");`
+`biocLite(c("BiocGenerics", "Biostrings"));`
+`require(BiocGenerics);`
+`require(Biostrings);`
 `packList=c('shiny','rmarkdown','shinydashboard','ape','rjson','jsonlite','pvclust','colorspace','DT','cluster','plyr','shinyjs','shinyBS');`
 `lapply(packList, install.packages, character.only = TRUE);`
 `lapply(packList, require, character.only = TRUE)`
