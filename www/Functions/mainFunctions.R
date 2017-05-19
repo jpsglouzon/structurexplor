@@ -14,6 +14,7 @@ computeStructuralPatterns<-function(pathfile,resParseRNA,snm,max_n_motifs,setnmo
     #resParseRNA <- parseDbFile(pathfile)
     incProgress(2/allstep, message = "Run the super-n-motifs model...")
     resComp <- runSNM (pathfile,snm,max_n_motifs) 
+    incProgress(3/allstep, message = "Run the clustering...")
     resClus <- runClustering (resComp$SuperMotif,resComp$dissimSS,resComp$matDissim_SSbynm,resComp$SuperMotifnmotifs,resComp$matnmPos,setnmotifs,maxClust,HC,setnbcluster) 
     incProgress(4/allstep, message = "Generate datatable of structures...")
     #datass<-c()
