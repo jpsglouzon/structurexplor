@@ -6,7 +6,7 @@ Discovering function-related structural features, such as the cloverleaf shape o
 
 ## Exploring your RNA secondary structures ##
 
-Go to [Structurexplor web application based on Shiny](ttps://mlrna.shinyapps.io/structurexplor-master/) and start exploring your data. 
+Go to [Structurexplor web application based on Shiny](https://mlrna.shinyapps.io/structurexplor-master/) and start exploring your RNA secondary structures. 
 
 *Structurexplor web app. has been successfully tested on modern browsers: Firefox 50, Chrome 55 and Safari 10.* 
 
