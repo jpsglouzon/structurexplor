@@ -49,7 +49,7 @@ Please report suggestions or issues [here](https://github.com/jpsglouzon/structu
 
 ## How to cite Structurexplor ##
 Glouzon, J-PS, Perreault J-P, Wang S. Structurexplor:An interactive plateform to explore 
-structural features of RNA secondary structures. Bioinformatics. 2017. (under Revision)
+structural features of RNA secondary structures. Bioinformatics. 2017.
 
 ## Licence ##
 Structurexplor is released under the terms of the GNU GPL licence.
